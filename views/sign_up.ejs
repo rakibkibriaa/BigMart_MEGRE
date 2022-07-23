@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/sign_up.css">
+    <title>
+        Sign UP
+    </title>
+
+<body>
+
+    
+
+    <div class="loginbox">
+        <h1>Sign Up</h1>
+
+        <form action="/logged_in" method = "post">
+
+            <input type="hidden" name="from" value="signup">
+            <p>Name</p>
+            <input type="text" name="name" id="name" placeholder="Enter your name">
+            <p>Username</p>
+            <input type="text" name="username" id = "username" placeholder="Enter your username">
+            <p>Password</p>
+            <input type="password" name="password" id = "password" placeholder="Enter your password">
+            <p>Email</p>
+            <input type="text" name="email" id = "email" placeholder="Enter your email">
+            <p>Address</p>
+            <input type="text" name="address" id = "address" placeholder="Enter your House No,Street,District,Division">
+            <p> Gender</p>
+            <br>
+            <select name="gender" id = "gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
+            <br>
+            <br>
+            <p> Type</p>
+            <br>
+            <select name="type" , id="type">
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+            </select>
+            <br>
+            <br>
+            <input type="submit" id="submit" value="Sign up">
+
+            <a href="/">Sign In</a>
+
+        </form>
+
+    </div>
+
+    
+
+</body>
+
+</head>
+
+</html>
