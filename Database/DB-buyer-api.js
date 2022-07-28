@@ -15,7 +15,7 @@ async function getAllCategories()
 async function getAllProducts(category)
 {
     const sql = `
-        SELECT product_id,name,price
+        SELECT *
         FROM PRODUCT
         WHERE category = :category
         `;
@@ -102,6 +102,20 @@ async function getCartItems(person_id)
     return (await database.execute(sql, binds, database.options)).rows;
 }
 
+async function deleteItemFromCart(person_id,product_id){
+    const sql = `
+        DELETE FROM CART
+        WHERE product_id = :product_id
+        AND person_id = :person_id
+   `;
+    const binds = {
+        person_id:person_id,
+        product_id:product_id
+    };
+    (await database.execute(sql, binds, database.options));
+    return;
+}
+
 module.exports = {
     getAllCategories,
     getAllProducts,
@@ -110,4 +124,5 @@ module.exports = {
     isInCart,
     getAllProductsByTag,
     getCartItems,
+    deleteItemFromCart,
 }

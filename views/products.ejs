@@ -13,53 +13,70 @@
 <body>
 
 
-    <nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg">
-        <div class="container-fluid" id='nav'>
-            <a class="navbar-brand">
+<nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg">
+    <div class="container-fluid" id='nav'>
+        <a class="navbar-brand">
 
-                <form action="/logged_in">
-                    <input type="hidden" name="category" value="">
-                    <button class="btn btn-info bg-dark" type="submit">
-                        <h1>BigMart</h1>
-                    </button>
-                </form>
-            </a>
-            <form class="d-flex" action="/search" method="POST">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+            <form action="/logged_in" method="POST">
+
+                <input type="hidden" name="category" value="" />
+                <input type="hidden" name="user_info" value=<%=JSON.stringify(user) %> />
+                <button class="btn btn-info bg-dark" type="submit">
+                    <h1>BigMart</h1>
+                </button>
             </form>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item pr-4">
-                    <a class="nav-link active" aria-current="page" href="#">Subscribe</a>
-                </li>
-                <li class="nav-item pr-4">
-                
-                    <form action="/clicked_cart" method="POST">
-                        <a class="nav-link active" href="#">
-                            <button type="submit">
-                                Cart
-                            </button>
-                        </a>
-                    </form>
-                
-                </li>
-                <li class="nav-item pr-4">
-                    <a class="nav-link active" href="#">Profile</a>
-                </li>
-                <li class="nav-item">
-                    <form action="/logout" method="POST">
-                        <a class="nav-link active" href="#">
-                            <button type="submit">
-                                Log out
-                            </button>
-                        </a>
-                    </form>
-                </li>
-            </ul>
 
-        </div>
+        </a>
 
-    </nav>
+        <form class="d-flex" action="/search" method="POST">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
+            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item pr-4">
+                <a class="nav-link active" aria-current="page" href="#">
+
+                    <button>
+                        Subscribe
+                    </button>
+                </a>
+            </li>
+            <li class="nav-item pr-4">
+
+                <form action="/clicked_cart" method="POST">
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                    <a class="nav-link active" href="#">
+                        <button type="submit">
+                            Cart
+                        </button>
+                    </a>
+                </form>
+
+            </li>
+            <li class="nav-item pr-4">
+                <a class="nav-link active" href="#">
+                    <button>
+                        Profile
+                    </button>
+                </a>
+            </li>
+            <li class="nav-item">
+                <form action="/logout" method="POST">
+                    <a class="nav-link active" href="#">
+                        <button type="submit">
+                            Log out
+                        </button>
+                    </a>
+                </form>
+            </li>
+        </ul>
+
+    </div>
+
+</nav>
+
 
 
     </div>
@@ -80,6 +97,8 @@
 
 
                             <form action="/item" method="POST">
+                                
+                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
 
                                 <div class="card" name='category' style="width: 15rem">
 
@@ -96,9 +115,12 @@
                                                     <%= value[i].NAME %>
                                                 </h5>
                                                 <p>Price: <%= value[i].PRICE %> </p>
-                                                <!--<p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                                                                            <p class="card-text"><small class="text-muted">Price: <%= value[i].PRICE %></small></p> -->
+                                                <p>Category: <%= value[i].CATEGORY %>
+                                                </p>
+                                                
                                             </div>
+
+                                            
 
                                         </button>
 

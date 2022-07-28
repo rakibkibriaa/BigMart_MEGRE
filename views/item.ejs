@@ -16,39 +16,51 @@
     <nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg">
         <div class="container-fluid" id='nav'>
             <a class="navbar-brand">
-            
-                <form action="/logged_in">
-                    <input type="hidden" name="category" value="">
+    
+                <form action="/logged_in" method="POST">
+    
+                    <input type="hidden" name="category" value="" />
+                    <input type="hidden" name="user_info" value=<%=JSON.stringify(user) %> />
                     <button class="btn btn-info bg-dark" type="submit">
                         <h1>BigMart</h1>
                     </button>
                 </form>
-            
+    
             </a>
+    
             <form class="d-flex" action="/search" method="POST">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
+                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
+    
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item pr-4">
-                    <a class="nav-link active" aria-current="page" href="#">Subscribe</a>
+                    <a class="nav-link active" aria-current="page" href="#">
+    
+                        <button>
+                            Subscribe
+                        </button>
+                    </a>
                 </li>
-
                 <li class="nav-item pr-4">
-                
+    
                     <form action="/clicked_cart" method="POST">
+                        <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                         <a class="nav-link active" href="#">
                             <button type="submit">
                                 Cart
                             </button>
                         </a>
                     </form>
-                
+    
                 </li>
-
-
                 <li class="nav-item pr-4">
-                    <a class="nav-link active" href="#">Profile</a>
+                    <a class="nav-link active" href="#">
+                        <button>
+                            Profile
+                        </button>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <form action="/logout" method="POST">
@@ -60,10 +72,11 @@
                     </form>
                 </li>
             </ul>
-
+    
         </div>
-
+    
     </nav>
+
 
     
 
@@ -90,6 +103,8 @@
                             
                             <div>
                                 <form action="/search" method="POST">
+                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+
                                     <input type="hidden" name="tag" value=<%= value.CATEGORY %> />
                                     <p class = "d-inline  card-text font-weight-bold">Category</p>
                                     <button class="d-inline btn btn-outline-primary ml-3" name='butt' value='3' type="submit"><%= value.CATEGORY %></button>
@@ -97,6 +112,9 @@
                             </div>
                             <div>
                                 <form action="/item/cart" method="POST">
+
+                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+
                                     <input type="hidden" name='product' value=<%=JSON.stringify(value) %> />
                                     <input type="hidden" name='product_id' value=<%=value.PRODUCT_ID %> />
                                     <div class="mb-4">

@@ -7,14 +7,12 @@ const DB_auth = require("../Database/DB-auth-api");
 const DB_Buyer = require("../Database/DB-buyer-api");
 const crypto = require("crypto");
 
-let person_id;
-let USER_NAME = null;
+//let person_id;
+//let USER_NAME = null;
+
 let CART_ID = null;
 
-router.get("/", (req, res) => {
-  USER_NAME = null;
-  person_id = null;
-
+router.get("/", (req, res) => { 
   res.render("index.ejs");
 });
 
@@ -22,40 +20,64 @@ router.get("/sign_up", (req, res) => {
   res.render("sign_up.ejs");
 });
 
-router.post("/products", async (req, res) => {
+router.post("/products", async (req, res) => 
+{
   let products = await DB_Buyer.getAllProducts(req.body.category);
-  res.render("products.ejs", { value: products });
+
+  console.log(products)
+  
+  let user = JSON.parse(req.body.user_info);
+ 
+  res.render("products.ejs", { value: products, user:user });
 });
 
 router.post("/item", async (req, res) => {
+
   let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
+
+  let user = JSON.parse(req.body.user_info);
+
   res.render("item.ejs", {
-    value: result1[0],
+    value: result1[0], user:user
   });
+
 });
 
 router.post("/item/cart", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
   let result = JSON.parse(req.body.product);
 
   let product_id = result.PRODUCT_ID;
 
-  let isInCart = await DB_Buyer.isInCart(person_id, product_id);
+  let isInCart = await DB_Buyer.isInCart(user.person_id,product_id);
 
   let quantity = req.body.quantity;
 
   let buttonPressed = req.body.butt;
 
-  if (buttonPressed == 1) {
-    if (isInCart[0].COUNT === 0 && quantity > 0) {
-      await DB_Buyer.addToCart(person_id, product_id, quantity);
-    } else if (quantity == 0) {
+
+  if (buttonPressed == 1) 
+  {
+    if (isInCart[0].COUNT === 0 && quantity > 0) 
+    {
+      await DB_Buyer.addToCart(user.person_id, product_id, quantity);
+    } else if (quantity == 0) 
+    {
       console.log("give valid quantity");
-    } else {
+    } else 
+    {
       console.log("Already Added");
     }
-  } else if (buttonPressed == 2) {
+
+  } 
+  else if (buttonPressed == 2) 
+  {
     console.log("butt2"); ///wishlist
-  } else if (buttonPressed == 3) {
+  } 
+  else if (buttonPressed == 3) 
+  {
     let category = req.body.category;
     let products = await DB_Buyer.getAllProducts(category);
 
@@ -65,47 +87,72 @@ router.post("/item/cart", async (req, res) => {
   return res.sendStatus(204);
 });
 
-router.post("/clicked_cart", async (req, res) => {
-  let result = await DB_Buyer.getCartItems(person_id);
+router.post("/clicked_cart", async (req, res) => 
+{
+  let user = JSON.parse(req.body.user_info);
 
-  res.render("cart_items.ejs", {
-    value: result,
+  let result = await DB_Buyer.getCartItems(user.person_id);
+  
+  let buttonPressed = req.body.butt;
+ 
+  if(buttonPressed == 1)
+  {
+     let product_id = req.body.product_id;
+     
+     await DB_Buyer.deleteItemFromCart(user.person_id,product_id);
+     
+
+     result = await DB_Buyer.getCartItems(user.person_id);
+  }
+
+  res.render("cart_items.ejs", 
+  {
+    value: result, user:user
   });
+
+
+
 });
 
-router.post("/search", async (req, res) => {
-  let tag = req.body.tag;
+router.post("/search", async (req, res) => 
+{
+  let user = JSON.parse(req.body.user_info);
 
+  let tag = req.body.tag;
+  
   let products = await DB_Buyer.getAllProductsByTag(tag.toUpperCase());
 
-  console.log(products);
+  
 
-  res.render("search.ejs", { value: products, tag: tag });
+  res.render("search.ejs", { value: products, tag: tag, user:user});
+
 });
 
-router.get("/logged_in", async (req, res) => {
-  if (USER_NAME === null) {
-    console.log("not logged in");
-    res.redirect("/");
-  } else {
-    let categories = await DB_Buyer.getAllCategories();
-
-    res.render("logged_in.ejs", { value: categories });
-  }
-});
 
 router.post("/logged_in", async (req, res) => {
-  if (USER_NAME !== null) {
-    return res.redirect("/logged_in");
+
+  let user = JSON.parse(req.body.user_info);
+
+  
+
+  if (user !== null) {
+
+    let categories = await DB_Buyer.getAllCategories();
+    return res.render("logged_in.ejs", { value: categories,
+        user: user
+    });
+
   }
 
   if (req.body.from.localeCompare("signup") === 0) {
-    console.log("ok got");
-
+    
+   
     console.log("it reaches");
     const uuid = crypto.randomBytes(16).toString("hex");
-    USER_NAME = req.body.username;
-    person_id = uuid;
+    
+    //USER_NAME = req.body.username;
+
+    //person_id = uuid;
 
     let user = {
       name: req.body.name,
@@ -116,6 +163,12 @@ router.post("/logged_in", async (req, res) => {
       id: uuid,
       type: req.body.type,
     };
+
+    let user_temp = {
+      person_id : uuid,
+      user_name : req.body.username
+    }
+    
     console.log(user.name);
     console.log(user.password);
     console.log(user.email);
@@ -126,27 +179,34 @@ router.post("/logged_in", async (req, res) => {
 
     let categories = await DB_Buyer.getAllCategories();
 
-    res.render("logged_in.ejs", { value: categories });
-  } else {
+    res.render("logged_in.ejs", { value: categories,user: user_temp });
+  } 
+  else 
+  {
     let username = req.body.username;
     let password = req.body.password;
-
-    USER_NAME = username;
-    //console.log(username)
-    //console.log(password)
+  
 
     let results;
-    results = await DB_auth.getLoginInfoByUsername(username);
 
-    person_id = results[0].PERSON_ID;
+    results = await DB_auth.getLoginInfoByUsername(username);
 
     let pass_db = results[0].PASSWORD;
 
-    if (password === pass_db) {
+    let user = {
+      user_name: req.body.username,
+      person_id: results[0].PERSON_ID
+    }
+    if (password === pass_db) 
+    {
       let categories = await DB_Buyer.getAllCategories();
-
-      res.render("logged_in.ejs", { value: categories });
-    } else {
+      
+      res.render("logged_in.ejs", { value: categories,
+        user: user
+      });
+    } 
+    else 
+    {
       return res.redirect("/");
     }
   }

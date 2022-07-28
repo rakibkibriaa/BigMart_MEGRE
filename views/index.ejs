@@ -12,6 +12,7 @@
     <div class="loginbox">
         <h1>Log in </h1>
         <form action='/logged_in' method ='POST'>
+            <input type="hidden" name='user_info' value='null' %> />
             <input type="hidden" name="from" value="login">
             <p>Username</p>
             <input type="text" id = 'username' name="username" placeholder="Enter your username"> 
