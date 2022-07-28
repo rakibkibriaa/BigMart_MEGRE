@@ -85,6 +85,23 @@ async function addToCart(person_id,product_id,quantity)
     return (await database.execute(sql, binds, database.options));
 }
 
+async function getCartItems(person_id)
+{
+    const sql = `
+        SELECT *
+        FROM Cart C JOIN PRODUCT P
+        ON (C.PRODUCT_ID = P.PRODUCT_ID)
+        
+        WHERE C.PERSON_ID = :person_id
+        `;
+    const binds = {
+        person_id : person_id,
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
 module.exports = {
     getAllCategories,
     getAllProducts,
@@ -92,4 +109,5 @@ module.exports = {
     addToCart,
     isInCart,
     getAllProductsByTag,
+    getCartItems,
 }
