@@ -61,6 +61,7 @@ async function isInCart(person_id,product_id)
         WHERE product_id = :product_id
         AND
         person_id = :person_id
+        AND CART_ID IS NULL
         `;
     const binds = {
         person_id : person_id,
@@ -70,20 +71,36 @@ async function isInCart(person_id,product_id)
     return (await database.execute(sql, binds, database.options)).rows;
 }
 
-async function addToCart(person_id,product_id,quantity)
+async function addToCart(person_id,product_id,quantity,cart_id)
 {
     const sql = `
         INSERT INTO Cart
-        VALUES(:person_id,:product_id, :quantity)
+        VALUES(:person_id,:product_id, :quantity, :cart_id)
         `;
     const binds = {
         person_id : person_id,
         product_id : product_id,
-        quantity : quantity
+        quantity : quantity,
+        cart_id : cart_id
     }
 
     return (await database.execute(sql, binds, database.options));
 }
+
+async function addToOrder(order_id,person_id)
+{
+    const sql = `
+        INSERT INTO ORDER_TABLE
+        VALUES(:order_id,:person_id)
+        `;
+    const binds = {
+        person_id : person_id,
+        order_id : order_id
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
+
 
 async function getCartItems(person_id)
 {
@@ -93,6 +110,8 @@ async function getCartItems(person_id)
         ON (C.PRODUCT_ID = P.PRODUCT_ID)
         
         WHERE C.PERSON_ID = :person_id
+        AND C.CART_ID IS NULL
+
         `;
     const binds = {
         person_id : person_id,
@@ -101,15 +120,16 @@ async function getCartItems(person_id)
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function IsInOrder(cart_id)
+async function IsInOrder(person_id)
 {
     const sql = `
-        SELECT COUNT(*)
-        FROM ORDER_TABLE
-        WHERE ORDER_ID = :cart_id
+        SELECT COUNT(*) AS COUNT
+        FROM CART
+        WHERE PERSON_ID = :person_id
+        AND CART_ID IS NULL
         `;
     const binds = {
-        cart_id : cart_id
+        person_id : person_id
 
     }
 
@@ -140,4 +160,5 @@ module.exports = {
     getCartItems,
     deleteItemFromCart,
     IsInOrder,
+    addToOrder,
 }

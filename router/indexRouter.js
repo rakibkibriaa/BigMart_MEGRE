@@ -6,6 +6,7 @@ const router = express.Router({ mergeParams: true });
 const DB_auth = require("../Database/DB-auth-api");
 const DB_Buyer = require("../Database/DB-buyer-api");
 const crypto = require("crypto");
+const { count } = require("console");
 
 //let person_id;
 //let USER_NAME = null;
@@ -62,7 +63,8 @@ router.post("/item/cart", async (req, res) => {
   {
     if (isInCart[0].COUNT === 0 && quantity > 0) 
     {
-      await DB_Buyer.addToCart(user.person_id, product_id, quantity);
+        await DB_Buyer.addToCart(user.person_id, product_id, quantity,null);
+
     } else if (quantity == 0) 
     {
       console.log("give valid quantity");
@@ -92,24 +94,40 @@ router.post("/clicked_cart", async (req, res) =>
   let user = JSON.parse(req.body.user_info);
 
   let result = await DB_Buyer.getCartItems(user.person_id);
-  
+
+  let cnt = await DB_Buyer.IsInOrder(user.person_id);
+
+  console.log(cnt[0].COUNT)
+
+
   let buttonPressed = req.body.butt;
- 
+  
+  console.log(buttonPressed)
+
   if(buttonPressed == 1)
   {
-     let product_id = req.body.product_id;
-     
-     await DB_Buyer.deleteItemFromCart(user.person_id,product_id);
-     
+    let product_id = req.body.product_id;
+    
+    await DB_Buyer.deleteItemFromCart(user.person_id,product_id);
+    
 
-     result = await DB_Buyer.getCartItems(user.person_id);
+    result = await DB_Buyer.getCartItems(user.person_id);
   }
 
-  res.render("cart_items.ejs", 
+  else if(buttonPressed == 2)
   {
-    value: result, user:user
-  });
+     const uuid = crypto.randomBytes(16).toString("hex");
+      await DB_Buyer.addToOrder(uuid,user.person_id);
 
+      result = await DB_Buyer.getCartItems(uuid, user.person_id);
+
+      console.log(result);   
+  }
+  
+  return res.render("cart_items.ejs", 
+  {
+      value: result, user:user
+  });
 
 
 });

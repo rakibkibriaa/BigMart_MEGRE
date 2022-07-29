@@ -99,7 +99,7 @@
                 <form action="/item" method="POST">
                     
                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-                    
+
                     <div class="card" name='category' style="width: 15rem">
 
 
@@ -155,10 +155,12 @@
    
 
     </div>
-
-    <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-primary btn-lg mb-5">Check Out</button>
-    </div>
+    <form action="/clicked_cart" method="POST">
+        <div class="d-flex justify-content-center">
+            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+            <button type="submit" class="btn btn-primary btn-lg mb-5" name='butt' value='2'>Check Out</button>
+        </div>
+    </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
