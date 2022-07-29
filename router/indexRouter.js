@@ -25,7 +25,7 @@ router.post("/products", async (req, res) =>
   let products = await DB_Buyer.getAllProducts(req.body.category);
 
   console.log(products)
-  
+
   let user = JSON.parse(req.body.user_info);
  
   res.render("products.ejs", { value: products, user:user });
@@ -148,6 +148,8 @@ router.post("/logged_in", async (req, res) => {
     
    
     console.log("it reaches");
+
+
     const uuid = crypto.randomBytes(16).toString("hex");
     
     //USER_NAME = req.body.username;
@@ -169,11 +171,6 @@ router.post("/logged_in", async (req, res) => {
       user_name : req.body.username
     }
     
-    console.log(user.name);
-    console.log(user.password);
-    console.log(user.email);
-    console.log(user.address);
-    console.log(user.username);
 
     await DB_auth.createNewUser(user);
 
@@ -181,7 +178,7 @@ router.post("/logged_in", async (req, res) => {
 
     res.render("logged_in.ejs", { value: categories,user: user_temp });
   } 
-  else 
+  else //login
   {
     let username = req.body.username;
     let password = req.body.password;

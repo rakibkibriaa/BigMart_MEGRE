@@ -97,7 +97,9 @@
 
 
                 <form action="/item" method="POST">
-
+                    
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                    
                     <div class="card" name='category' style="width: 15rem">
 
 

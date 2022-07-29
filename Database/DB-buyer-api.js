@@ -101,6 +101,20 @@ async function getCartItems(person_id)
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function IsInOrder(cart_id)
+{
+    const sql = `
+        SELECT COUNT(*)
+        FROM ORDER_TABLE
+        WHERE ORDER_ID = :cart_id
+        `;
+    const binds = {
+        cart_id : cart_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 
 async function deleteItemFromCart(person_id,product_id){
     const sql = `
@@ -125,4 +139,5 @@ module.exports = {
     getAllProductsByTag,
     getCartItems,
     deleteItemFromCart,
+    IsInOrder,
 }

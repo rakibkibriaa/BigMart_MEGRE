@@ -107,7 +107,7 @@ async function getLoginInfoByUsername(username)
 {
     const sql = `
         SELECT 
-            Person_id,username,password
+            *
         FROM 
             Person
         WHERE 
