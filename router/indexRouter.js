@@ -13,7 +13,7 @@ const { count } = require("console");
 
 let CART_ID = null;
 
-router.get("/", (req, res) => { 
+router.get("/", (req, res) => {
   res.render("index.ejs");
 });
 
@@ -21,15 +21,14 @@ router.get("/sign_up", (req, res) => {
   res.render("sign_up.ejs");
 });
 
-router.post("/products", async (req, res) => 
-{
+router.post("/products", async (req, res) => {
   let products = await DB_Buyer.getAllProducts(req.body.category);
 
   console.log(products)
 
   let user = JSON.parse(req.body.user_info);
- 
-  res.render("products.ejs", { value: products, user:user });
+
+  res.render("products.ejs", { value: products, user: user });
 });
 
 router.post("/item", async (req, res) => {
@@ -39,7 +38,7 @@ router.post("/item", async (req, res) => {
   let user = JSON.parse(req.body.user_info);
 
   res.render("item.ejs", {
-    value: result1[0], user:user
+    value: result1[0], user: user
   });
 
 });
@@ -52,34 +51,28 @@ router.post("/item/cart", async (req, res) => {
 
   let product_id = result.PRODUCT_ID;
 
-  let isInCart = await DB_Buyer.isInCart(user.person_id,product_id);
+  let isInCart = await DB_Buyer.isInCart(user.person_id, product_id);
 
   let quantity = req.body.quantity;
 
   let buttonPressed = req.body.butt;
 
 
-  if (buttonPressed == 1) 
-  {
-    if (isInCart[0].COUNT === 0 && quantity > 0) 
-    {
-        await DB_Buyer.addToCart(user.person_id, product_id, quantity,null);
+  if (buttonPressed == 1) {
+    if (isInCart[0].COUNT === 0 && quantity > 0) {
+      await DB_Buyer.addToCart(user.person_id, product_id, quantity, null);
 
-    } else if (quantity == 0) 
-    {
+    } else if (quantity == 0) {
       console.log("give valid quantity");
-    } else 
-    {
+    } else {
       console.log("Already Added");
     }
 
-  } 
-  else if (buttonPressed == 2) 
-  {
+  }
+  else if (buttonPressed == 2) {
     console.log("butt2"); ///wishlist
-  } 
-  else if (buttonPressed == 3) 
-  {
+  }
+  else if (buttonPressed == 3) {
     let category = req.body.category;
     let products = await DB_Buyer.getAllProducts(category);
 
@@ -89,8 +82,7 @@ router.post("/item/cart", async (req, res) => {
   return res.sendStatus(204);
 });
 
-router.post("/clicked_cart", async (req, res) => 
-{
+router.post("/clicked_cart", async (req, res) => {
   let user = JSON.parse(req.body.user_info);
 
   let result = await DB_Buyer.getCartItems(user.person_id);
@@ -101,48 +93,53 @@ router.post("/clicked_cart", async (req, res) =>
 
 
   let buttonPressed = req.body.butt;
-  
+
   console.log(buttonPressed)
 
-  if(buttonPressed == 1)
-  {
+  if (buttonPressed == 1) {
     let product_id = req.body.product_id;
-    
-    await DB_Buyer.deleteItemFromCart(user.person_id,product_id);
-    
+
+    await DB_Buyer.deleteItemFromCart(user.person_id, product_id);
+
 
     result = await DB_Buyer.getCartItems(user.person_id);
   }
 
-  else if(buttonPressed == 2)
-  {
-     const uuid = crypto.randomBytes(16).toString("hex");
-      await DB_Buyer.addToOrder(uuid,user.person_id);
+  else if (buttonPressed == 2) {
 
-      result = await DB_Buyer.getCartItems(uuid, user.person_id);
+    const uuid = crypto.randomBytes(16).toString("hex");
 
-      console.log(result);   
+    let today = new Date();
+
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+    let date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear() + ' at ' + time;
+
+    await DB_Buyer.addToOrder(uuid, user.person_id, date, 'Pending');
+
+    result = await DB_Buyer.getCartItems(uuid, user.person_id);
+
+    console.log(result);
   }
-  
-  return res.render("cart_items.ejs", 
-  {
-      value: result, user:user
-  });
+
+  return res.render("cart_items.ejs",
+    {
+      value: result, user: user
+    });
 
 
 });
 
-router.post("/search", async (req, res) => 
-{
+router.post("/search", async (req, res) => {
   let user = JSON.parse(req.body.user_info);
 
   let tag = req.body.tag;
-  
+
   let products = await DB_Buyer.getAllProductsByTag(tag.toUpperCase());
 
-  
 
-  res.render("search.ejs", { value: products, tag: tag, user:user});
+
+  res.render("search.ejs", { value: products, tag: tag, user: user });
 
 });
 
@@ -151,25 +148,26 @@ router.post("/logged_in", async (req, res) => {
 
   let user = JSON.parse(req.body.user_info);
 
-  
+
 
   if (user !== null) {
 
     let categories = await DB_Buyer.getAllCategories();
-    return res.render("logged_in.ejs", { value: categories,
-        user: user
+    return res.render("logged_in.ejs", {
+      value: categories,
+      user: user
     });
 
   }
 
   if (req.body.from.localeCompare("signup") === 0) {
-    
-   
+
+
     console.log("it reaches");
 
 
     const uuid = crypto.randomBytes(16).toString("hex");
-    
+
     //USER_NAME = req.body.username;
 
     //person_id = uuid;
@@ -185,22 +183,22 @@ router.post("/logged_in", async (req, res) => {
     };
 
     let user_temp = {
-      person_id : uuid,
-      user_name : req.body.username
+      person_id: uuid,
+      user_name: req.body.username
     }
-    
+
 
     await DB_auth.createNewUser(user);
 
     let categories = await DB_Buyer.getAllCategories();
 
-    res.render("logged_in.ejs", { value: categories,user: user_temp });
-  } 
+    res.render("logged_in.ejs", { value: categories, user: user_temp });
+  }
   else //login
   {
     let username = req.body.username;
     let password = req.body.password;
-  
+
 
     let results;
 
@@ -212,16 +210,15 @@ router.post("/logged_in", async (req, res) => {
       user_name: req.body.username,
       person_id: results[0].PERSON_ID
     }
-    if (password === pass_db) 
-    {
+    if (password === pass_db) {
       let categories = await DB_Buyer.getAllCategories();
-      
-      res.render("logged_in.ejs", { value: categories,
+
+      res.render("logged_in.ejs", {
+        value: categories,
         user: user
       });
-    } 
-    else 
-    {
+    }
+    else {
       return res.redirect("/");
     }
   }
@@ -230,5 +227,64 @@ router.post("/logged_in", async (req, res) => {
 router.post("/logout", async (req, res) => {
   res.redirect("/");
 });
+
+router.post('/profile', async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  let results = await DB_Buyer.getUserDetails(user.person_id);
+
+  //let order_brief = await DB_Buyer.getPreviousOrder(user.person_id);
+
+  let result = await DB_Buyer.getCartIdOfOrder(user.person_id);
+
+  let order_brief = []
+
+  for (let i = 0; i < result.length; i++) {
+
+    let products = await DB_Buyer.getProductsByCartId(result[i].CART_ID)
+
+
+    const obj = {
+
+      ORDER_DATE: result[i].ORDER_DATE,
+      CART_ID: result[i].CART_ID,
+      ORDER_STATUS : result[i].ORDER_STATUS,
+      value: products
+
+    }
+
+
+    order_brief.push(obj);
+
+  }
+
+
+
+  res.render('profile.ejs', {
+    user: user,
+    value: results[0],
+    order_brief: order_brief
+  });
+
+});
+
+router.post('/show_order_details', async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+  let cart_id = req.body.CART_ID;
+
+  let result = await DB_Buyer.getProductsByCartId(cart_id);
+
+  let status = await DB_Buyer.getOrderStatus(cart_id);
+
+  console.log(status[0])
+  res.render('prevOrder.ejs', {
+    user: user,
+    value: result,
+    status: status[0]
+  });
+  
+})
 
 module.exports = router;
