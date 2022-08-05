@@ -89,8 +89,6 @@ router.post("/clicked_cart", async (req, res) => {
 
   let cnt = await DB_Buyer.IsInOrder(user.person_id);
 
-  console.log(cnt[0].COUNT)
-
 
   let buttonPressed = req.body.butt;
 
