@@ -3,7 +3,7 @@ const database = require('./database');
 
 
 // function to get id from email
-async function getUserIDByEmail(email){
+async function getUserIDByEmail(email) {
     const sql = `
         SELECT 
             ID
@@ -13,14 +13,13 @@ async function getUserIDByEmail(email){
             EMAIL = :email
         `;
     const binds = {
-        email : email
+        email: email
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
 
-async function getUserIDByUserName(username)
-{
+async function getUserIDByUserName(username) {
     const sql = `
         SELECT 
             Person_id
@@ -30,7 +29,7 @@ async function getUserIDByUserName(username)
             USERNAME = :username
         `;
     const binds = {
-        username : username
+        username: username
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
@@ -38,7 +37,7 @@ async function getUserIDByUserName(username)
 // function to creat new user
 // user should have handle, email, pass, dob
 // {id} will be returned
-async function createNewUser(user){
+async function createNewUser(user) {
     const sql = `
         INSERT INTO
             Person(PERSON_ID, NAME,USERNAME, EMAIL, PASSWORD,ADDRESS)
@@ -47,15 +46,15 @@ async function createNewUser(user){
     `;
     const binds = {
         name: user.name,
-        email :user.email,
+        email: user.email,
         password: user.password,
         address: user.address,
         username: user.username,
         person_id: user.id,
-       
+
     }
     console.log(user.type)
-    if(user.type.localeCompare('buyer')===0){
+    if (user.type.localeCompare('buyer') === 0) {
         const sql_buyer = `
             INSERT INTO
                 Buyer(buyer_id)
@@ -68,7 +67,7 @@ async function createNewUser(user){
         await database.execute(sql_buyer, binds_buyer, {});
     }
     //
-    else if(user.type.localeCompare('seller')===0){
+    else if (user.type.localeCompare('seller') === 0) {
         const sql_seller = `
             INSERT INTO
                 Seller(seller_id)
@@ -86,7 +85,7 @@ async function createNewUser(user){
 
 
 
-async function getLoginInfoByEmail(email){
+async function getLoginInfoByEmail(email) {
     const sql = `
         SELECT 
             ID,
@@ -103,8 +102,7 @@ async function getLoginInfoByEmail(email){
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function getLoginInfoByUsername(username)
-{
+async function getLoginInfoByUsername(username) {
     const sql = `
         SELECT 
             *
@@ -114,13 +112,46 @@ async function getLoginInfoByUsername(username)
             USERNAME = :username
         `;
     const binds = {
-        username : username
+        username: username
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
 
-async function getLoginInfoByID(id){
+async function isInAdmin(username) {
+    const sql = `
+        SELECT 
+            *
+        FROM 
+            Person P JOIN ADMIN A
+        ON (P.PERSON_ID = A.ADMIN_ID)
+        WHERE 
+            P.USERNAME = :username
+        `;
+    const binds = {
+        username: username
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function isInBuyer(username) {
+    const sql = `
+        SELECT 
+            *
+        FROM 
+            Person P
+        WHERE 
+            P.USERNAME = :username
+        `;
+    const binds = {
+        username: username
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function getLoginInfoByID(id) {
     const sql = `
         SELECT 
             ID,
@@ -148,4 +179,7 @@ module.exports = {
     getLoginInfoByID,
     getUserIDByUserName,
     getLoginInfoByUsername,
+    isInAdmin,
+    isInBuyer,
+
 }

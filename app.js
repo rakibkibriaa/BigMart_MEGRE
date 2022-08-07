@@ -9,7 +9,7 @@ const express = require('express');
 
 // router
 const router = require('./router/indexRouter');
-//const adminRouter = require('./router/adminIndexRouter');
+const adminRouter = require('./router/adminIndexRouter');
 // app creation
 const app = express();
 
@@ -20,13 +20,13 @@ app.set('view engine', 'ejs');
 
 // allow public directory
 app.use(express.static('public'))
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 //app.set('strict routing', true);
 // using router
-//app.use('/admin', adminRouter);
+
 //app.use(auth);
 app.use('/', router);
-
+app.use('/', adminRouter);
 
 // using error handling middlware
 //app.use(errorHandling.notFound);

@@ -83,6 +83,7 @@ router.post("/item/cart", async (req, res) => {
 });
 
 router.post("/clicked_cart", async (req, res) => {
+
   let user = JSON.parse(req.body.user_info);
 
   let result = await DB_Buyer.getCartItems(user.person_id);
@@ -109,9 +110,9 @@ router.post("/clicked_cart", async (req, res) => {
 
     let today = new Date();
 
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    //var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
-    let date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear() + ' at ' + time;
+    let date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear(); //+ ' at ' + time;
 
     await DB_Buyer.addToOrder(uuid, user.person_id, date, 'Pending');
 
@@ -194,6 +195,7 @@ router.post("/logged_in", async (req, res) => {
   }
   else //login
   {
+
     let username = req.body.username;
     let password = req.body.password;
 
@@ -209,12 +211,29 @@ router.post("/logged_in", async (req, res) => {
       person_id: results[0].PERSON_ID
     }
     if (password === pass_db) {
-      let categories = await DB_Buyer.getAllCategories();
 
-      res.render("logged_in.ejs", {
-        value: categories,
-        user: user
-      });
+      let isAdmin = await DB_auth.isInAdmin(username)
+
+      let isBuyer = await DB_auth.isInBuyer(username)
+
+      if (isAdmin.length > 0) {
+        res.render('admin_logged_in.ejs', {
+          user: user
+        })
+      }
+
+      else if (isBuyer.length > 0) {
+        let categories = await DB_Buyer.getAllCategories();
+
+        res.render("logged_in.ejs", {
+          value: categories,
+          user: user
+        });
+      }
+
+
+
+
     }
     else {
       return res.redirect("/");
@@ -247,7 +266,7 @@ router.post('/profile', async (req, res) => {
 
       ORDER_DATE: result[i].ORDER_DATE,
       CART_ID: result[i].CART_ID,
-      ORDER_STATUS : result[i].ORDER_STATUS,
+      ORDER_STATUS: result[i].ORDER_STATUS,
       value: products
 
     }
@@ -282,7 +301,7 @@ router.post('/show_order_details', async (req, res) => {
     value: result,
     status: status[0]
   });
-  
+
 })
 
 module.exports = router;
