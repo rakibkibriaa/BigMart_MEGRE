@@ -5,6 +5,7 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const DB_auth = require("../Database/DB-auth-api");
 const DB_Buyer = require("../Database/DB-buyer-api");
+const DB_Seller = require("../Database/DB-seller-api");
 const crypto = require("crypto");
 const { count } = require("console");
 
@@ -19,6 +20,19 @@ router.get("/", (req, res) => {
 
 router.get("/sign_up", (req, res) => {
   res.render("sign_up.ejs");
+});
+
+router.post("/seller_products", async (req, res) => {
+
+  
+  let user = JSON.parse(req.body.user_info);
+
+  let products = await DB_Seller.getAllProducts(req.body.category , user.user_name);
+  console.log(products)
+  console.log(req.body.category);
+  console.log(user.user_name);
+
+  res.render("products.ejs", { value: products, user: user });
 });
 
 router.post("/products", async (req, res) => {
@@ -191,7 +205,10 @@ router.post("/logged_in", async (req, res) => {
 
     let categories = await DB_Buyer.getAllCategories();
 
-    res.render("logged_in.ejs", { value: categories, user: user_temp });
+    res.render("logged_in.ejs", { 
+      value: categories,
+       user: user_temp
+     }); // sending values
   }
   else //login
   {
@@ -212,9 +229,15 @@ router.post("/logged_in", async (req, res) => {
     }
     if (password === pass_db) {
 
-      let isAdmin = await DB_auth.isInAdmin(username)
+      
 
       let isBuyer = await DB_auth.isInBuyer(username)
+      let isAdmin = await DB_auth.isInAdmin(username)
+      let isSeller = await DB_auth.isInSeller(username)
+
+      console.log(isBuyer);
+      console.log(isSeller);
+      console.log(isAdmin);
 
       if (isAdmin.length > 0) {
         res.render('admin_logged_in.ejs', {
@@ -223,9 +246,21 @@ router.post("/logged_in", async (req, res) => {
       }
 
       else if (isBuyer.length > 0) {
+        console.log("it is buyer");
         let categories = await DB_Buyer.getAllCategories();
 
         res.render("logged_in.ejs", {
+          value: categories,
+          user: user
+        });
+      }
+
+      else if (isSeller.length > 0) {
+        console.log("it is seller");
+
+        let categories = await DB_Seller.getAllCategories(user.user_name);
+
+        res.render("seller_logged_in.ejs", {
           value: categories,
           user: user
         });
@@ -239,6 +274,17 @@ router.post("/logged_in", async (req, res) => {
       return res.redirect("/");
     }
   }
+});
+
+router.post("/seller_logged_in", async(req,res) => {
+  
+  let user = JSON.parse(req.body.user_info);
+  let categories = await DB_Seller.getAllCategories(user.user_name);
+  
+  res.render("seller_logged_in.ejs", {
+    value: categories,
+    user: user
+  });
 });
 
 router.post("/logout", async (req, res) => {

@@ -5,8 +5,8 @@ oracledb.autoCommit = true;
 async function startup() {
     console.log('starting up database.');
     await oracledb.createPool({
-        user: 'c##rakib',
-        password: 'rakib',
+        user: 'c##rifat',
+        password: 'rifat',
         connectstring: 'localhost/orcl',
         poolMin: 4,
         poolMax: 10,

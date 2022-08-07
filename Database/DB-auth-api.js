@@ -66,7 +66,7 @@ async function createNewUser(user) {
         }
         await database.execute(sql_buyer, binds_buyer, {});
     }
-    //
+    
     else if (user.type.localeCompare('seller') === 0) {
         const sql_seller = `
             INSERT INTO
@@ -130,7 +130,7 @@ async function isInAdmin(username) {
         `;
     const binds = {
         username: username
-    }
+    } 
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
@@ -140,7 +140,25 @@ async function isInBuyer(username) {
         SELECT 
             *
         FROM 
-            Person P
+            Person P JOIN BUYER B
+            ON(P.PERSON_ID = B.BUYER_ID)
+        WHERE 
+            P.USERNAME = :username
+        `;
+    const binds = {
+        username: username
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function isInSeller(username) {
+    const sql = `
+        SELECT 
+            *
+        FROM 
+            Person P JOIN SELLER S
+            ON(P.PERSON_ID = S.SELLER_ID)
         WHERE 
             P.USERNAME = :username
         `;
@@ -171,7 +189,6 @@ async function getLoginInfoByID(id) {
     return (await database.execute(sql, binds, database.options)).rows;
 }
 
-
 module.exports = {
     getUserIDByEmail,
     createNewUser,
@@ -181,5 +198,5 @@ module.exports = {
     getLoginInfoByUsername,
     isInAdmin,
     isInBuyer,
-
+    isInSeller
 }
