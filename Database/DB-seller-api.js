@@ -32,16 +32,20 @@ async function getAllProducts(category, name) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function getAllProductsByTag(tag) {
+async function getAllProductsByTag(tag,name) {
     const sql = `
         SELECT *
-        FROM STORAGE
-         WHERE ( UPPER(NAME) LIKE '%'||:tag||'%')
+        FROM STORAGE S JOIN PRODUCT P
+        ON (S.PRODUCT_NAME = P.NAME)
+         WHERE ((( UPPER(P.NAME) LIKE '%'||:tag||'%')
          OR
-         ( UPPER(category) LIKE '%'||:tag||'%')
+         ( UPPER(P.category) LIKE '%'||:tag||'%')))
+         AND 
+         (S.SELLER_NAME = :name)
         `;
     const binds = {
-        tag: tag
+        tag: tag,
+        name: name
     }
 
     return (await database.execute(sql, binds, database.options)).rows;

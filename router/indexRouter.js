@@ -9,6 +9,7 @@ const DB_Seller = require("../Database/DB-seller-api");
 const crypto = require("crypto");
 const { count } = require("console");
 
+
 //let person_id;
 //let USER_NAME = null;
 
@@ -32,7 +33,7 @@ router.post("/seller_products", async (req, res) => {
   console.log(req.body.category);
   console.log(user.user_name);
 
-  res.render("products.ejs", { value: products, user: user });
+  res.render("seller_products.ejs", { value: products, user: user });
 });
 
 router.post("/products", async (req, res) => {
@@ -52,6 +53,17 @@ router.post("/item", async (req, res) => {
   let user = JSON.parse(req.body.user_info);
 
   res.render("item.ejs", {
+    value: result1[0], user: user
+  });
+
+});
+router.post("/seller_item", async (req, res) => {
+
+  let result1 = await DB_Seller.getProductDetails(req.body.product_id);
+
+  let user = JSON.parse(req.body.user_info);
+
+  res.render("seller_item.ejs", {
     value: result1[0], user: user
   });
 
@@ -153,6 +165,19 @@ router.post("/search", async (req, res) => {
 
 
   res.render("search.ejs", { value: products, tag: tag, user: user });
+
+});
+
+router.post("/seller_search", async (req, res) => {
+  let user = JSON.parse(req.body.user_info);
+
+  let tag = req.body.tag;
+
+  let products = await DB_Seller.getAllProductsByTag(tag.toUpperCase(),user.user_name);
+
+
+
+  res.render("seller_search.ejs", { value: products, tag: tag, user: user });
 
 });
 
