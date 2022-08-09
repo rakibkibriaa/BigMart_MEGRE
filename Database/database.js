@@ -5,8 +5,8 @@ oracledb.autoCommit = true;
 async function startup() {
     console.log('starting up database.');
     await oracledb.createPool({
-        user: 'c##rifat',
-        password: 'rifat',
+        user: 'c##rakib',
+        password: 'rakib',
         connectstring: 'localhost/orcl',
         poolMin: 4,
         poolMax: 10,
@@ -22,13 +22,13 @@ async function shutdown() {
         // If this hangs, you may need DISABLE_OOB=ON in a sqlnet.ora file.
         await oracledb.getPool().close(10);
         console.log('Pool closed');
-    } catch(err) {
-        console.log("ERROR shutting down database: "+err.message);
+    } catch (err) {
+        console.log("ERROR shutting down database: " + err.message);
     }
 }
 
 // code to execute sql
-async function execute(sql, binds, options){
+async function execute(sql, binds, options) {
     let connection, results;
     try {
         // Get a connection from the default pool
@@ -50,7 +50,7 @@ async function execute(sql, binds, options){
 }
 
 // code to execute many sql
-async function executeMany(sql, binds, options){
+async function executeMany(sql, binds, options) {
     let connection;
     try {
         // Get a connection from the default pool
