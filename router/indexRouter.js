@@ -174,6 +174,7 @@ router.post("/seller_search", async (req, res) => {
   let tag = req.body.tag;
 
   let products = await DB_Seller.getAllProductsByTag(tag.toUpperCase(),user.user_name);
+  
 
 
 
