@@ -10,6 +10,7 @@ const express = require('express');
 // router
 const router = require('./router/indexRouter');
 const adminRouter = require('./router/adminIndexRouter');
+const sellerRouter = require('./router/sellerRouter');
 // app creation
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: false }))
 //app.use(auth);
 app.use('/', router);
 app.use('/', adminRouter);
+app.use('/',sellerRouter);
 
 // using error handling middlware
 //app.use(errorHandling.notFound);

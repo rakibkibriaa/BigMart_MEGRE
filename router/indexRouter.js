@@ -23,18 +23,7 @@ router.get("/sign_up", (req, res) => {
   res.render("sign_up.ejs");
 });
 
-router.post("/seller_products", async (req, res) => {
 
-  
-  let user = JSON.parse(req.body.user_info);
-
-  let products = await DB_Seller.getAllProducts(req.body.category , user.user_name);
-  console.log(products)
-  console.log(req.body.category);
-  console.log(user.user_name);
-
-  res.render("seller_products.ejs", { value: products, user: user });
-});
 
 router.post("/products", async (req, res) => {
   let products = await DB_Buyer.getAllProducts(req.body.category);
@@ -57,17 +46,7 @@ router.post("/item", async (req, res) => {
   });
 
 });
-router.post("/seller_item", async (req, res) => {
 
-  let result1 = await DB_Seller.getProductDetails(req.body.product_id);
-
-  let user = JSON.parse(req.body.user_info);
-
-  res.render("seller_item.ejs", {
-    value: result1[0], user: user
-  });
-
-});
 
 router.post("/item/cart", async (req, res) => {
 
@@ -168,19 +147,7 @@ router.post("/search", async (req, res) => {
 
 });
 
-router.post("/seller_search", async (req, res) => {
-  let user = JSON.parse(req.body.user_info);
 
-  let tag = req.body.tag;
-
-  let products = await DB_Seller.getAllProductsByTag(tag.toUpperCase(),user.user_name);
-  
-
-
-
-  res.render("seller_search.ejs", { value: products, tag: tag, user: user });
-
-});
 
 
 router.post("/logged_in", async (req, res) => {
@@ -229,12 +196,21 @@ router.post("/logged_in", async (req, res) => {
 
     await DB_auth.createNewUser(user);
 
-    let categories = await DB_Buyer.getAllCategories();
+    if(!user.type.localeCompare('seller')){
+      let categories = await DB_Seller.getAllCategories(user.user_name);
+      res.render("seller_logged_in.ejs", { 
+        value: categories,
+         user: user_temp
+       }); // sending values
+    }
+  else{
+      let categories = await DB_Buyer.getAllCategories();
 
-    res.render("logged_in.ejs", { 
-      value: categories,
-       user: user_temp
-     }); // sending values
+      res.render("logged_in.ejs", { 
+        value: categories,
+        user: user_temp
+      }); // sending values
+    }
   }
   else //login
   {
@@ -302,16 +278,7 @@ router.post("/logged_in", async (req, res) => {
   }
 });
 
-router.post("/seller_logged_in", async(req,res) => {
-  
-  let user = JSON.parse(req.body.user_info);
-  let categories = await DB_Seller.getAllCategories(user.user_name);
-  
-  res.render("seller_logged_in.ejs", {
-    value: categories,
-    user: user
-  });
-});
+
 
 router.post("/logout", async (req, res) => {
   res.redirect("/");
