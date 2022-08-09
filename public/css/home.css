@@ -1,3 +1,8 @@
 button:focus {
     outline: none;
 }
+
+img {
+    max-width: 15rem;
+
+}
