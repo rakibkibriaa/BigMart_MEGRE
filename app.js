@@ -28,8 +28,7 @@ app.use(express.urlencoded({ extended: false }))
 //app.use(auth);
 app.use('/', router);
 app.use('/', adminRouter);
-app.use('/',sellerRouter);
-
+app.use('/', sellerRouter);
 // using error handling middlware
 //app.use(errorHandling.notFound);
 
