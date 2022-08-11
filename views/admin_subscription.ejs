@@ -17,7 +17,7 @@
             <div class="container-fluid" id = 'nav'>
                 <a class="navbar-brand">
                     
-                    <form action="/logged_in" method="POST">
+                    <form action="/admin_logged_in" method="POST">
                         
                         <input type="hidden" name="category" value="" />
                         <input type="hidden" name="user_info" value=<%=JSON.stringify(user) %> />
@@ -35,14 +35,13 @@
                 </form>
                 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
                     <li class="nav-item pr-4">
                        
-                            <form action="/subscribe" method="POST">
+                            <form action="/admin_subscription" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
                                     <button type="submit">
-                                        Subscribe
+                                        Subscription
                                     </button>
                                 </a>
                             </form>
@@ -50,11 +49,11 @@
                     </li>
                     <li class="nav-item pr-4">
                        
-                            <form action="/clicked_cart" method="POST">
+                            <form action="/list_order" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
                                     <button type="submit">
-                                        Cart
+                                        Orders
                                     </button>
                                 </a>
                             </form>
@@ -93,58 +92,75 @@
 
     <div class="Sections">
 
-        <div class="Categories ml-5">
+        <h1>Current Subscription Plans (<%=value.length%> Plans)</h1>
 
-            <h1 class="display-4">Categories</h1>
-            
-        
-            
-            <div class="row row-cols-md-3 g-4 ml-10 mt-10 " ">
+        <div class="row row-cols-md-3 g-4 ml-10 mt-10">
           
-                    <% for(var i=0; i < value.length;i++) {%>
+            <% for(var i=0; i < value.length;i++) {%>
                         
-                            <div class="col-3 mb-5" >
+                <div class=" col-3 mb-5">
 
-                                
-                                <form action="/products" method="POST">
 
-                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-                                
-                                    <div class="card"  name = 'category' style="width: 15rem" >
-                                        
-                                        
-                                            <div class="d-flex justify-content-center">
-
-                                                <button class = "btn" type="submit">
-
-                                                    <img src="/img/product_default.png"  class="rounded mx-auto d-block" alt="...">
-
-                                                        <div class="card-body">
-                                                            
-                                                            <input type='hidden' name='category' value= <%= value[i].CATEGORY %> />
-                                                                <h5 class="card-title" , name="title" value="haha1"><%= value[i].CATEGORY %></h5>
-                                                                <!--<p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                                                                <p class="card-text"><small class="text-muted">Price: <%= value[i].PRICE %></small></p> -->
-                                                        </div> 
-
-                                                </button>
-
-                                            </div>
-                                        
-                                    </div>
-
-                                </form>
-
-                            </div>
-                        
-                    <%} %>
+                <form action="/clicked_plan" method="POST">
                     
-            </div>
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
 
-           
-          
+                    <div class="card" name='category' style="width: 15rem">
+
+
+                        <div class="d-flex justify-content-center">
+
+                            <button class="btn" type="submit">
+
+                                <!--<img src="/img/product_default.png" class="rounded float-start" alt="...">-->
+
+                                <div class="card-body">
+
+                                    <input type='hidden' name='subscription_id' value=<%=value[i].SUBSCRIPTION_ID %> />
+
+                                    <h5 class="card-title">
+                                         <%= value[i].NAME %>
+                                    </h5>
+                                    <p class="d-inline  card-text font-weight-bold"> Total Bundles: <%=value[i].TOTAL_BUNDLES %> </p>
+                                    
+                                    <p class="card-text font-weight-bold"> Total Subscribers: <%= value[i].SUBSCRIBER_NUMBER %> </p>
+                                    
+                                    <p class="card-text font-weight-bold">Price: <%= value[i].PRICE  %> TAKA 
+
+                                    </p>
+
+                                    
+                                    <!--<p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                                                                                <p class="card-text"><small class="text-muted">Price: <%= value[i].PRICE %></small></p> -->
+                                </div>
+                               
+                            </button>
+
+                        
+
+                        </div>
+
+                        
+
+                    </div>
+
+                </form>
+
         </div>
+
+        <%} %>
+
+         
+
+        
     </div>
+
+    <form action="/add_new_plan" method="POST">
+            <div class="d-flex justify-content-center">
+                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                <button type="submit" class="btn btn-primary btn-lg mb-5" name='butt' value='2'>ADD PLAN</button>
+            </div>
+    </form>
 
    
    

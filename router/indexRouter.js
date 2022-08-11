@@ -26,6 +26,7 @@ router.get("/sign_up", (req, res) => {
 
 
 router.post("/products", async (req, res) => {
+
   let products = await DB_Buyer.getAllProducts(req.body.category);
 
   console.log(products)
@@ -196,17 +197,17 @@ router.post("/logged_in", async (req, res) => {
 
     await DB_auth.createNewUser(user);
 
-    if(!user.type.localeCompare('seller')){
+    if (!user.type.localeCompare('seller')) {
       let categories = await DB_Seller.getAllCategories(user.user_name);
-      res.render("seller_logged_in.ejs", { 
+      res.render("seller_logged_in.ejs", {
         value: categories,
-         user: user_temp
-       }); // sending values
+        user: user_temp
+      }); // sending values
     }
-  else{
+    else {
       let categories = await DB_Buyer.getAllCategories();
 
-      res.render("logged_in.ejs", { 
+      res.render("logged_in.ejs", {
         value: categories,
         user: user_temp
       }); // sending values
@@ -231,7 +232,7 @@ router.post("/logged_in", async (req, res) => {
     }
     if (password === pass_db) {
 
-      
+
 
       let isBuyer = await DB_auth.isInBuyer(username)
       let isAdmin = await DB_auth.isInAdmin(username)

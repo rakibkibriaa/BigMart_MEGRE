@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
    <link rel="stylesheet" href="/css/home.css">
-
+   <link rel="stylesheet" href="css/log_in_styles.css">
     <title>
         BigMart
     </title>
@@ -17,7 +17,7 @@
             <div class="container-fluid" id = 'nav'>
                 <a class="navbar-brand">
                     
-                    <form action="/logged_in" method="POST">
+                    <form action="/admin_logged_in" method="POST">
                         
                         <input type="hidden" name="category" value="" />
                         <input type="hidden" name="user_info" value=<%=JSON.stringify(user) %> />
@@ -35,14 +35,13 @@
                 </form>
                 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
                     <li class="nav-item pr-4">
                        
-                            <form action="/subscribe" method="POST">
+                            <form action="/admin_subscription" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
                                     <button type="submit">
-                                        Subscribe
+                                        Subscription
                                     </button>
                                 </a>
                             </form>
@@ -50,11 +49,11 @@
                     </li>
                     <li class="nav-item pr-4">
                        
-                            <form action="/clicked_cart" method="POST">
+                            <form action="/list_order" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
                                     <button type="submit">
-                                        Cart
+                                        Orders
                                     </button>
                                 </a>
                             </form>
@@ -95,20 +94,21 @@
 
         <div class="Categories ml-5">
 
-            <h1 class="display-4">Categories</h1>
+            <h1 class="display-4">Bundles</h1>
             
         
             
             <div class="row row-cols-md-3 g-4 ml-10 mt-10 " ">
           
-                    <% for(var i=0; i < value.length;i++) {%>
+                    <% for(var i=0; i < value.length && value[i].BUNDLE_ID != null ;i++) {%>
                         
                             <div class="col-3 mb-5" >
 
                                 
-                                <form action="/products" method="POST">
+                                <form action="/view_bundle_item" method="POST">
 
                                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                    <input type="hidden" name='bundle_id' value=<%= value[i].BUNDLE_ID %> />
                                 
                                     <div class="card"  name = 'category' style="width: 15rem" >
                                         
@@ -121,8 +121,12 @@
 
                                                         <div class="card-body">
                                                             
-                                                            <input type='hidden' name='category' value= <%= value[i].CATEGORY %> />
-                                                                <h5 class="card-title" , name="title" value="haha1"><%= value[i].CATEGORY %></h5>
+
+                                                            <input type='hidden' name='subscription_id' value= <%= subscription_id %> />
+
+                                                                <h5 class="card-title" , name="title" value="haha1">Bundle No : <%= i + 1 %></h5>
+
+
                                                                 <!--<p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
                                                                 <p class="card-text"><small class="text-muted">Price: <%= value[i].PRICE %></small></p> -->
                                                         </div> 
@@ -146,8 +150,35 @@
         </div>
     </div>
 
+    
+    <div>
+           
+        <form action="/add_new_bundle" method="POST">
+                <div class="d-flex justify-content-center">
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                    <input type="hidden" name='subscription_id' value=<%=subscription_id %> />
+
+
+                    <button type="submit" class="btn btn-primary btn-lg mb-5" name='butt' value='2'>ADD BUNDLE</button>
+                
+                </div>
+        </form>
+
+        <form action="/delete_plan" method="POST">
+                <div class="d-flex justify-content-center">
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                    <input type="hidden" name='subscription_id' value=<%=subscription_id %> />
+
+
+                    <button type="submit" class="btn btn-primary btn-lg mb-5" name='butt' value='2'>Delete Plan</button>
+                </div>
+        </form>
+           
+        
+    </div>
+
    
-   
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
