@@ -99,6 +99,16 @@ router.post('/admin_subscription', async (req, res) => {
     let existing_plans = await DB_admin.getSubscriptonPlans();
     let user = JSON.parse(req.body.user_info);
 
+    for (let i = 0; i < existing_plans.length; i++) {
+
+        let bundle_cnt = await DB_admin.getBundleCount(existing_plans[i].SUBSCRIPTION_ID);
+        let subscriber_count = await DB_admin.getSubscriberCount(existing_plans[i].SUBSCRIPTION_ID);
+
+        existing_plans[i].BUNDLE_COUNT = bundle_cnt[0].COUNT;
+        existing_plans[i].SUBSCRIBER_COUNT = subscriber_count[0].COUNT;
+    }
+
+
     console.log(existing_plans)
 
     res.render('admin_subscription.ejs', {
@@ -131,7 +141,7 @@ router.post('/added_subscription_plan', async (req, res) => {
 
 
 
-    await DB_admin.addNewSubscriptionPlan(uuid, price, plan_name, 0, 0);
+    await DB_admin.addNewSubscriptionPlan(uuid, price, plan_name);
 
     let bundles = await DB_admin.getBundle(uuid);
 
@@ -194,6 +204,14 @@ router.post('/clicked_plan', async (req, res) => {
     let subscription_id = req.body.subscription_id;
 
     let bundles = await DB_admin.getBundle(subscription_id)
+
+
+
+    for (let i = 0; i < bundles.length; i++) {
+        let product_count = await DB_admin.getProductCount(bundles[i].BUNDLE_ID);
+
+        bundles[i].PRODUCT_COUNT = product_count[0].COUNT
+    }
 
     console.log(bundles)
 
