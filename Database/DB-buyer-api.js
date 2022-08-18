@@ -76,13 +76,13 @@ async function addToCart(person_id, product_id, quantity, cart_id) {
         product_id: product_id,
         quantity: quantity,
         cart_id: cart_id
-    
+
     }
 
     return (await database.execute(sql, binds, database.options));
 }
 
-async function addToOrder(order_id, person_id, dateOfOrder,status) {
+async function addToOrder(order_id, person_id, dateOfOrder, status) {
 
     const sql = `
         INSERT INTO ORDER_TABLE
@@ -93,6 +93,21 @@ async function addToOrder(order_id, person_id, dateOfOrder,status) {
         order_id: order_id,
         dateOfOrder: dateOfOrder,
         status: status
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
+
+async function addBuyerToSubscription(subscription_id, person_id) {
+
+    const sql = `
+        BEGIN
+	        ADD_USER_TO_SUBSCRIPTION(:subscription_id, :person_id);
+        END;
+        `;
+    const binds = {
+        subscription_id: subscription_id,
+        person_id: person_id,
     }
 
     return (await database.execute(sql, binds, database.options));
@@ -217,6 +232,36 @@ async function getOrderStatus(cart_id) {
     };
     return (await database.execute(sql, binds, database.options)).rows;
 }
+
+async function isInSubscription(subscription_id, person_id) {
+    const sql = `
+        SELECT COUNT(*) as COUNT
+        FROM SUBSCRIPTION
+        WHERE subscription_id = :subscription_id
+        AND
+        BUYER_ID = :person_id
+        `;
+    const binds = {
+        subscription_id: subscription_id,
+        person_id: person_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function deleteBuyerFromSubscription(subscription_id, person_id) {
+    const sql = `
+        UPDATE SUBSCRIPTION
+        SET BUYER_ID = null
+        WHERE SUBSCRIPTION_ID = :subscription_id
+        AND BUYER_ID = :person_id
+        `;
+    const binds = {
+        subscription_id: subscription_id,
+        person_id: person_id,
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
 module.exports = {
     getAllCategories,
     getAllProducts,
@@ -233,4 +278,7 @@ module.exports = {
     getCartIdOfOrder,
     getProductsByCartId,
     getOrderStatus,
+    addBuyerToSubscription,
+    isInSubscription,
+    deleteBuyerFromSubscription,
 }

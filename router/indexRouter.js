@@ -8,6 +8,7 @@ const DB_Buyer = require("../Database/DB-buyer-api");
 const DB_Seller = require("../Database/DB-seller-api");
 const crypto = require("crypto");
 const { count } = require("console");
+const DB_admin = require("../Database/DB-admin-api");
 
 
 //let person_id;
@@ -29,7 +30,7 @@ router.post("/products", async (req, res) => {
 
   let products = await DB_Buyer.getAllProducts(req.body.category);
 
-  console.log(products)
+
 
   let user = JSON.parse(req.body.user_info);
 
@@ -170,6 +171,7 @@ router.post("/logged_in", async (req, res) => {
   if (req.body.from.localeCompare("signup") === 0) {
 
 
+
     console.log("it reaches");
 
 
@@ -238,9 +240,6 @@ router.post("/logged_in", async (req, res) => {
       let isAdmin = await DB_auth.isInAdmin(username)
       let isSeller = await DB_auth.isInSeller(username)
 
-      console.log(isBuyer);
-      console.log(isSeller);
-      console.log(isAdmin);
 
       if (isAdmin.length > 0) {
         res.render('admin_logged_in.ejs', {
@@ -335,7 +334,7 @@ router.post('/show_order_details', async (req, res) => {
 
   let status = await DB_Buyer.getOrderStatus(cart_id);
 
-  console.log(status[0])
+
   res.render('prevOrder.ejs', {
     user: user,
     value: result,
@@ -343,5 +342,170 @@ router.post('/show_order_details', async (req, res) => {
   });
 
 })
+
+router.post("/subscribe", async (req, res) => {
+
+
+  let user = JSON.parse(req.body.user_info);
+
+  let existing_plans = await DB_admin.getSubscriptonPlans();
+  for (let i = 0; i < existing_plans.length; i++) {
+
+    let bundle_cnt = await DB_admin.getBundleCount(existing_plans[i].SUBSCRIPTION_ID);
+    let subscriber_count = await DB_admin.getSubscriberCount(existing_plans[i].SUBSCRIPTION_ID);
+
+
+    let isInSubs = await DB_Buyer.isInSubscription(existing_plans[i].SUBSCRIPTION_ID, user.person_id);
+
+
+
+    existing_plans[i].IS_SUBSCRIBED = isInSubs[0].COUNT;
+
+    existing_plans[i].BUNDLE_COUNT = bundle_cnt[0].COUNT;
+    existing_plans[i].SUBSCRIBER_COUNT = subscriber_count[0].COUNT;
+
+
+  }
+
+
+
+  res.render('buyer_subscription_view.ejs', {
+    value: existing_plans,
+    user: user
+  });
+
+
+});
+
+router.post("/subscribed", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+  let subscription_id = req.body.subscription_id;
+
+
+  await DB_Buyer.addBuyerToSubscription(subscription_id, user.person_id)
+
+
+  let existing_plans = await DB_admin.getSubscriptonPlans();
+  for (let i = 0; i < existing_plans.length; i++) {
+
+    let bundle_cnt = await DB_admin.getBundleCount(existing_plans[i].SUBSCRIPTION_ID);
+    let subscriber_count = await DB_admin.getSubscriberCount(existing_plans[i].SUBSCRIPTION_ID);
+
+
+    let isInSubs = await DB_Buyer.isInSubscription(existing_plans[i].SUBSCRIPTION_ID, user.person_id);
+
+
+
+    existing_plans[i].IS_SUBSCRIBED = isInSubs[0].COUNT;
+
+    existing_plans[i].BUNDLE_COUNT = bundle_cnt[0].COUNT;
+    existing_plans[i].SUBSCRIBER_COUNT = subscriber_count[0].COUNT;
+
+
+  }
+
+
+
+  res.render('buyer_subscription_view.ejs', {
+    value: existing_plans,
+    user: user
+  });
+
+
+
+});
+
+router.post("/unsubscribed", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+  let subscription_id = req.body.subscription_id;
+
+  await DB_Buyer.deleteBuyerFromSubscription(subscription_id, user.person_id)
+
+
+  let existing_plans = await DB_admin.getSubscriptonPlans();
+  for (let i = 0; i < existing_plans.length; i++) {
+
+    let bundle_cnt = await DB_admin.getBundleCount(existing_plans[i].SUBSCRIPTION_ID);
+    let subscriber_count = await DB_admin.getSubscriberCount(existing_plans[i].SUBSCRIPTION_ID);
+
+
+    let isInSubs = await DB_Buyer.isInSubscription(existing_plans[i].SUBSCRIPTION_ID, user.person_id);
+
+
+
+    existing_plans[i].IS_SUBSCRIBED = isInSubs[0].COUNT;
+
+    existing_plans[i].BUNDLE_COUNT = bundle_cnt[0].COUNT;
+    existing_plans[i].SUBSCRIBER_COUNT = subscriber_count[0].COUNT;
+
+
+  }
+
+
+
+  res.render('buyer_subscription_view.ejs', {
+    value: existing_plans,
+    user: user
+  });
+
+
+});
+
+router.post("/buyer_clicked_plan", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+  let subscription_id = req.body.subscription_id;
+
+  let bundles = await DB_admin.getBundle(subscription_id)
+
+
+
+  for (let i = 0; i < bundles.length; i++) {
+    let product_count = await DB_admin.getProductCount(bundles[i].BUNDLE_ID);
+
+    bundles[i].PRODUCT_COUNT = product_count[0].COUNT
+  }
+
+
+
+  res.render('buyer_view_plan.ejs', {
+    value: bundles,
+    user: user,
+    subscription_id: subscription_id
+  });
+
+
+});
+
+
+router.post("/buyer_view_bundle_item", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  let bundle_id = req.body.bundle_id;
+
+  let result = await DB_admin.getBundleItems(bundle_id);
+
+
+
+
+
+
+
+  let subscription_id = req.body.subscription_id;
+
+
+  return res.render("buyer_view_bundle_items.ejs",
+    {
+      value: result, user: user,
+      subscription_id: subscription_id,
+      bundle_id: bundle_id
+    });
+
+});
+
+
 
 module.exports = router;

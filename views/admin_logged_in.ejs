@@ -35,6 +35,7 @@
                 </form>
                 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                     <li class="nav-item pr-4">
                        
                             <form action="/admin_subscription" method="POST">
@@ -47,6 +48,7 @@
                             </form>
                        
                     </li>
+
                     <li class="nav-item pr-4">
                        
                             <form action="/list_order" method="POST">
@@ -62,7 +64,7 @@
 
                    
                     <li class="nav-item pr-4">
-                        <form action="/profile" method="POST">
+                        <form action="/admin_profile" method="POST">
                             <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                             <a class="nav-link active" href="#">
                                 <button type="submit">

@@ -1,23 +1,25 @@
 <html>
 
 <head>
-
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  
-    <link rel="stylesheet" href="/css/home.css">
+
+        
+   <link rel="stylesheet" href="/css/home.css">
+
     <title>
         BigMart
     </title>
 
 <body>
-
-
-<nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg" >
+    
+    
+        <nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg" >
             <div class="container-fluid" id = 'nav'>
                 <a class="navbar-brand">
                     
-                    <form action="/admin_logged_in" method="POST">
+                    <form action="/logged_in" method="POST">
                         
                         <input type="hidden" name="category" value="" />
                         <input type="hidden" name="user_info" value=<%=JSON.stringify(user) %> />
@@ -35,13 +37,14 @@
                 </form>
                 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                     <li class="nav-item pr-4">
                        
-                            <form action="/admin_subscription" method="POST">
+                            <form action="/subscribe" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
                                     <button type="submit">
-                                        Subscription
+                                        Subscribe
                                     </button>
                                 </a>
                             </form>
@@ -49,11 +52,11 @@
                     </li>
                     <li class="nav-item pr-4">
                        
-                            <form action="/list_order" method="POST">
+                            <form action="/clicked_cart" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
                                     <button type="submit">
-                                        Orders
+                                        Cart
                                     </button>
                                 </a>
                             </form>
@@ -62,7 +65,7 @@
 
                    
                     <li class="nav-item pr-4">
-                        <form action="/admin_profile" method="POST">
+                        <form action="/profile" method="POST">
                             <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                             <a class="nav-link active" href="#">
                                 <button type="submit">
@@ -85,28 +88,20 @@
                 
             </div>
           
-</nav>
+        </nav>
 
+    <div class="Sections">
 
+        <h1>Current Subscription Plans (<%=value.length%> Plans)</h1>
 
-<body>
-    
-    <div class="none ml-5">
-
-        <h1 class="display-4 text-center pt-5 pb-5">Bundle (<%=value.length%> Items)
-
-        </h1>
-
-       
-
-        <div class="row row-cols-md-3 g-4 ml-10 mt-10">
+        <div class="row row-cols-md-3 g-4 ml-4 mt-4">
           
             <% for(var i=0; i < value.length;i++) {%>
                         
                 <div class=" col-3 mb-5">
 
 
-                <form action="/select_bundle_item" method="POST">
+                <form action="/buyer_clicked_plan" method="POST">
                     
                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
 
@@ -117,19 +112,21 @@
 
                             <button class="btn" type="submit">
 
-                                <img src="/img/product_default.png" class="rounded float-start" alt="...">
+                                <!--<img src="/img/product_default.png" class="rounded float-start" alt="...">-->
 
                                 <div class="card-body">
-                                    <input type='hidden' name='product_id' value=<%=value[i].PRODUCT_ID %> />
-                                    <input type='hidden' name='subscription_id' value=<%=subscription_id %> />
-                                    <input type='hidden' name='bundle_id' value=<%= bundle_id %> />
+
+                                    <input type='hidden' name='subscription_id' value=<%=value[i].SUBSCRIPTION_ID %> />
+
                                     <h5 class="card-title">
-                                        <%= value[i].NAME %>
+                                         <%= value[i].NAME %>
                                     </h5>
-                                    <p class="d-inline  card-text font-weight-bold"> Quantity:</p>
-                                    <input class="d-inline ml-2 col-lg-3 form-control" type="text" value=<%=value[i].QUANTITY %> />
-                               
-                                    <p>Price: <%= value[i].PRICE %>
+                                    <p class="d-inline  card-text font-weight-bold"> Total Bundles: <%= value[i].BUNDLE_COUNT %> </p>
+                                    
+                                    <p class="card-text font-weight-bold"> Total Subscribers: <%= value[i].SUBSCRIBER_COUNT %> </p>
+                                    
+                                    <p class="card-text font-weight-bold">Price: <%= value[i].PRICE  %> TAKA 
+
                                     </p>
 
                                     
@@ -139,7 +136,7 @@
                                
                             </button>
 
-                        
+                       
 
                         </div>
 
@@ -149,45 +146,52 @@
 
                 </form>
 
-                <form action="/view_bundle_item" method="POST">
-                    <input type="hidden" name="product_id" value = <%=value[i].PRODUCT_ID %> />
-                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-                    <input type='hidden' name='subscription_id' value=<%=subscription_id %> />
-                    <input type='hidden' name='bundle_id' value=<%= bundle_id %> />
-                    <div>
-                        <button class="btn btn-danger" type="submit" name='butt' value='1'>Remove</button>
-                    </div>
-                </form>
+                <% if(value[i].IS_SUBSCRIBED >= 1)
+                { 
+                    %>
+                        <form action="/unsubscribed" method="POST">
+                        <div class="d-flex justify-content-left">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <input type="hidden" name='subscription_id' value=<%=value[i].SUBSCRIPTION_ID %> />
+                            <button type="submit" class="btn btn-danger btn-lg mb-5" name='butt' value='2'>Unsubscribe</button>
+                        </div>
+                         
+                        </form>
+                    <% 
+                } 
+                else
+                { 
+                    %>  
+                        <form action="/subscribed" method="POST">
+                        <div class="d-flex justify-content-left">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <input type="hidden" name='subscription_id' value=<%=value[i].SUBSCRIPTION_ID %> />
+                            <button type="submit" class="btn btn-success btn-lg mb-5" name='butt' value='2'>Subscribe</button>
+                        </div>
+                         
+                        </form>
+                    <% 
+                }
+
+                %>
+                 
+              
         </div>
 
         <%} %>
 
+         
 
-
-    </div>
-
-
-    <form action="/add_new_item" method="POST">
-
-            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-            <input type='hidden' name='subscription_id' value=<%=subscription_id %> />
-            <input type='hidden' name='bundle_id' value=<%= bundle_id %> />
-            <div>
-                <button class="btn btn-danger" type="submit" name='butt' value='1'>ADD MORE ITEM</button>
-            </div>
-    </form>
-
-    <form action="/clicked_plan" method="POST">
-
-        <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-        <input type='hidden' name='subscription_id' value=<%=subscription_id %> />
         
-        <div>
-            <button class="btn btn-danger" type="submit" name='butt' value='1'>Other Bundles</button>
-        </div>
-    </form>
+    </div>  
+
 
     
+
+
+
+
+
 </body>
 
 
