@@ -138,17 +138,18 @@ router.post('/added_subscription_plan', async (req, res) => {
 
     let plan_name = req.body.plan_name;
     let price = req.body.price;
+    let discount = req.body.discount;
 
 
-
-    await DB_admin.addNewSubscriptionPlan(uuid, price, plan_name);
+    await DB_admin.addNewSubscriptionPlan(uuid, price, plan_name, discount);
 
     let bundles = await DB_admin.getBundle(uuid);
 
     res.render('view_plan.ejs', {
         value: bundles,
         user: user,
-        subscription_id: uuid
+        subscription_id: uuid,
+
     });
 
 
@@ -209,8 +210,11 @@ router.post('/clicked_plan', async (req, res) => {
 
     for (let i = 0; i < bundles.length; i++) {
         let product_count = await DB_admin.getProductCount(bundles[i].BUNDLE_ID);
+        let discount = await DB_admin.getBundleDiscount(bundles[i].BUNDLE_ID);
 
+        console.log(discount)
         bundles[i].PRODUCT_COUNT = product_count[0].COUNT
+        bundles[i].DISCOUNT = discount[0].DISCOUNT
     }
 
     console.log(bundles)
@@ -283,9 +287,6 @@ router.post("/added_to_bundle", async (req, res) => {
 
     let subscription_id = req.body.subscription_id;
 
-
-    console.log(product_id)
-
     let isInBundle = await DB_admin.isInBundle(bundle_id, product_id);
 
 
@@ -321,12 +322,15 @@ router.post("/added_to_bundle", async (req, res) => {
 
     let result1 = await DB_admin.getBundleItems(bundle_id);
 
+    let discount = await DB_admin.getBundleDiscount(bundle_id);
+
 
     return res.render("bundle_items.ejs",
         {
             value: result1, user: user,
             subscription_id: subscription_id,
-            bundle_id: bundle_id
+            bundle_id: bundle_id,
+            discount: discount[0].DISCOUNT
         });
 
 });
@@ -346,7 +350,6 @@ router.post("/view_bundle_item", async (req, res) => {
     console.log(buttonPressed)
 
 
-
     let subscription_id = req.body.subscription_id;
 
 
@@ -360,15 +363,48 @@ router.post("/view_bundle_item", async (req, res) => {
 
         if (result.length === 0) {
             await DB_admin.deleteBundleFromSubscription(subscription_id, bundle_id);
+            await DB_admin.deleteBundleFromBUNDLE_DISCOUNT(bundle_id);
         }
     }
+    if (buttonPressed == 3) {
+        await DB_admin.updateBundleDiscount(bundle_id, req.body.disc);
+    }
 
-    return res.render("bundle_items.ejs",
-        {
-            value: result, user: user,
+    if (result.length === 0) {
+
+        let bundles = await DB_admin.getBundle(subscription_id)
+
+
+
+        for (let i = 0; i < bundles.length; i++) {
+            let product_count = await DB_admin.getProductCount(bundles[i].BUNDLE_ID);
+
+            bundles[i].PRODUCT_COUNT = product_count[0].COUNT
+        }
+
+        return res.render('view_plan.ejs', {
+            value: bundles,
+            user: user,
             subscription_id: subscription_id,
-            bundle_id: bundle_id
+
         });
+    }
+    else {
+
+
+        let discount = await DB_admin.getBundleDiscount(bundle_id);
+
+
+
+        return res.render("bundle_items.ejs",
+            {
+                value: result, user: user,
+                subscription_id: subscription_id,
+                bundle_id: bundle_id,
+                discount: discount[0].DISCOUNT
+            });
+    }
+
 
 });
 

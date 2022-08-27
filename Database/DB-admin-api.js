@@ -172,6 +172,17 @@ async function deleteBundleFromSubscription(subscription_id, bundle_id) {
 
     return (await database.execute(sql, binds, database.options));
 }
+async function deleteBundleFromBUNDLE_DISCOUNT(bundle_id) {
+    const sql = `
+        DELETE FROM BUNDLE_DISCOUNT
+        WHERE BUNDLE_ID = :bundle_id
+        `;
+    const binds = {
+        bundle_id: bundle_id,
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
 
 async function getBundleItems(bundle_id) {
     const sql = `
@@ -188,6 +199,20 @@ async function getBundleItems(bundle_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+
+async function getBundleDiscount(bundle_id) {
+    const sql = `
+        SELECT DISCOUNT
+        FROM BUNDLE_DISCOUNT B
+        WHERE BUNDLE_ID = :bundle_id
+        `;
+    const binds = {
+        bundle_id: bundle_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
 
 async function getBundle(subscription_id) {
     const sql = `
@@ -216,6 +241,18 @@ async function deleteItemFromBundle(bundle_id, product_id) {
     (await database.execute(sql, binds, database.options));
     return;
 }
+async function updateBundleDiscount(bundle_id, discount) {
+    const sql = `
+        UPDATE BUNDLE_DISCOUNT SET DISCOUNT = :discount
+        WHERE bundle_id = :bundle_id
+   `;
+    const binds = {
+        bundle_id: bundle_id,
+        discount: discount
+    };
+    (await database.execute(sql, binds, database.options));
+    return;
+}
 
 module.exports = {
     getOrderList,
@@ -234,4 +271,7 @@ module.exports = {
     getBundleCount,
     getSubscriberCount,
     getProductCount,
+    deleteBundleFromBUNDLE_DISCOUNT,
+    getBundleDiscount,
+    updateBundleDiscount,
 }

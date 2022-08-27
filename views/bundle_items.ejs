@@ -96,9 +96,19 @@
         <h1 class="display-4 text-center pt-5 pb-5">Bundle (<%=value.length%> Items)
 
         </h1>
-
-       
-
+        <div class="d-flex justify-content-center">
+            <p class="b"> Current discount:  <%= discount %> % </p>
+        </div>
+        <form action="/view_bundle_item" method="POST">
+            
+            <div class="d-flex justify-content-center">
+                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                <input class="d-inline ml-2 col-lg-3 max-width:" name = 'disc' type="text" value=<%= discount %> />
+                <input type='hidden' name='subscription_id' value=<%=subscription_id %> />
+                <input type='hidden' name='bundle_id' value=<%= bundle_id %> />
+                <button class="btn btn-success" type="submit" name='butt' value='3'>Update Discount</button>
+            </div>
+        </form>
         <div class="row row-cols-md-3 g-4 ml-10 mt-10">
           
             <% for(var i=0; i < value.length;i++) {%>

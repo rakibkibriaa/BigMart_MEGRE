@@ -98,6 +98,8 @@ async function addToOrder(order_id, person_id, dateOfOrder, status) {
     return (await database.execute(sql, binds, database.options));
 }
 
+
+
 async function addBuyerToSubscription(subscription_id, person_id) {
 
     const sql = `
@@ -131,6 +133,39 @@ async function getCartItems(person_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+
+async function avgRating(product_id) {
+    const sql = `
+        SELECT AVG(R.RATING) as AVG
+        FROM REVIEW R JOIN PRODUCT_REVIEW PR
+        ON(R.REVIEW_ID = PR.REVIEW_ID)
+        GROUP BY (PR.PRODUCT_ID)
+        HAVING PR.PRODUCT_ID = :product_id
+        `;
+    const binds = {
+        product_id: product_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function addReview(msg, review_id, person_id, product_id, rating) {
+    const sql = `
+        BEGIN
+            ADD_REVIEW(:msg,:review_id,:person_id,:product_id,:rating);
+        END;
+        `;
+    const binds = {
+        person_id: person_id,
+        review_id: review_id,
+        msg: msg,
+        product_id: product_id,
+        rating: rating
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
+
 async function IsInOrder(person_id) {
     const sql = `
         SELECT COUNT(*) AS COUNT
@@ -139,6 +174,44 @@ async function IsInOrder(person_id) {
         AND CART_ID IS NULL
         `;
     const binds = {
+        person_id: person_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function getReviews(product_id) {
+    const sql = `
+        SELECT R.MSG,P.NAME,R.RATING,P.PERSON_ID,R.REVIEW_ID
+        FROM PRODUCT_REVIEW PRO_R JOIN PERSON_REVIEW PER_R
+        ON(PRO_R.REVIEW_ID = PER_R.REVIEW_ID) JOIN REVIEW R
+        ON(PER_R.REVIEW_ID = R.REVIEW_ID) JOIN PERSON P
+        ON(P.PERSON_ID = PER_R.PERSON_ID) 
+        AND PRO_R.PRODUCT_ID = :product_id
+
+        `;
+    const binds = {
+        product_id: product_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function canReview(product_id, person_id) {
+    const sql = `
+        
+        SELECT COUNT(*) AS COUNT
+
+        FROM ORDER_TABLE O JOIN CART C
+        ON(O.ORDER_ID = C.CART_ID)
+
+        WHERE O.ORDER_STATUS = 'Delivered' AND O.PERSON_ID = :person_id AND C.PRODUCT_ID = :product_id
+
+        `;
+    const binds = {
+        product_id: product_id,
         person_id: person_id
 
     }
@@ -160,6 +233,31 @@ async function deleteItemFromCart(person_id, product_id) {
     return;
 }
 
+async function updateReview(review_id, msg, rating) {
+    const sql = `
+        UPDATE REVIEW SET MSG = :msg, RATING = :rating
+        WHERE REVIEW_ID = :review_id
+   `;
+    const binds = {
+        review_id: review_id,
+        msg: msg,
+        rating: rating
+    };
+    (await database.execute(sql, binds, database.options));
+    return;
+}
+
+async function deleteReview(review_id) {
+    const sql = `
+        DELETE FROM PERSON_REVIEW WHERE REVIEW_ID = :review_id
+   `;
+    const binds =
+    {
+        review_id: review_id,
+    };
+    (await database.execute(sql, binds, database.options));
+    return;
+}
 async function getUserDetails(person_id) {
     const sql = `
         SELECT *
@@ -262,6 +360,21 @@ async function deleteBuyerFromSubscription(subscription_id, person_id) {
 
     return (await database.execute(sql, binds, database.options));
 }
+async function addRating(review_id, person_id, product_id, rating) {
+    const sql = `
+        BEGIN
+            ADD_REVIEW_V2(:review_id,:person_id,:product_id,:rating);
+        END;
+        `;
+    const binds = {
+        review_id: review_id,
+        rating: rating,
+        person_id: person_id,
+        product_id: product_id
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
 module.exports = {
     getAllCategories,
     getAllProducts,
@@ -281,4 +394,11 @@ module.exports = {
     addBuyerToSubscription,
     isInSubscription,
     deleteBuyerFromSubscription,
+    addReview,
+    getReviews,
+    addRating,
+    canReview,
+    avgRating,
+    updateReview,
+    deleteReview,
 }
