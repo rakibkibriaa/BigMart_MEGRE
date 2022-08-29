@@ -15,6 +15,7 @@
     "ejs": "^3.1.8",
     "express": "^4.18.1",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.19",
     "oracledb": "^5.4.0",
     "requirejs": "^2.3.6"
   }

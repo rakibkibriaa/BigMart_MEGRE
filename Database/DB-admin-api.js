@@ -27,7 +27,31 @@ async function changeOrderStatus(order_id, status) {
     return (await database.execute(sql, binds, database.options));
 }
 
+async function getSellerList(){
+    const sql = `
+        SELECT *
+        FROM SELLER_APPROVAL
+        
+    `;
+    const binds = {
+        
+    }
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getSellerById(SELLER_ID){
+    const sql = `
+        SELECT *
+        FROM PERSON
+        WHERE PERSON_ID = :SELLER_ID
+    `;
+    const binds = {
+        SELLER_ID : SELLER_ID
+    }
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 module.exports = {
     getOrderList,
     changeOrderStatus,
+    getSellerList,
+    getSellerById
 }

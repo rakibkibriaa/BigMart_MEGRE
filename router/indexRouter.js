@@ -198,7 +198,8 @@ router.post("/logged_in", async (req, res) => {
 
     if(!user.type.localeCompare('seller')){
       let categories = await DB_Seller.getAllCategories(user.user_name);
-      res.render("seller_logged_in.ejs", { 
+      
+      res.render("seller_waiting_approval.ejs", { 
         value: categories,
          user: user_temp
        }); // sending values
@@ -236,6 +237,7 @@ router.post("/logged_in", async (req, res) => {
       let isBuyer = await DB_auth.isInBuyer(username)
       let isAdmin = await DB_auth.isInAdmin(username)
       let isSeller = await DB_auth.isInSeller(username)
+      let waiting = await DB_auth.waiting(username)
 
       console.log(isBuyer);
       console.log(isSeller);
@@ -265,6 +267,10 @@ router.post("/logged_in", async (req, res) => {
         res.render("seller_logged_in.ejs", {
           value: categories,
           user: user
+        });
+      }
+      else if(waiting.length>0){
+        res.render("seller_waiting_approval.ejs", {
         });
       }
 

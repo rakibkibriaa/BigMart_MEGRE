@@ -43,18 +43,18 @@
                         </button>
                     </a>
                 </li> -->
-                <!-- <li class="nav-item pr-4">
+                <li class="nav-item pr-4">
     
-                    <form action="/clicked_cart" method="POST">
+                    <form action="/seller_wishlist" method="POST">
                         <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                         <a class="nav-link active" href="#">
                             <button type="submit">
-                                Cart
+                                Wishlist
                             </button>
                         </a>
                     </form>
     
-                </li> -->
+                </li>
               <li class="nav-item pr-4">
                     
                         <form action="/profile" method="POST">
@@ -140,18 +140,18 @@
                             <div>
                                 <form action="/seller_search" method="POST">
                                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-
+                                    <input type="hidden" name='product_id' value=<%=value.PRODUCT_ID %> />
                                     <input type="hidden" name="tag" value=<%= value.CATEGORY %> />
                                     <p class = "d-inline  card-text font-weight-bold">Category</p>
                                     <button class="d-inline btn btn-outline-primary ml-3" name='butt' value='3' type="submit"><%= value.CATEGORY %></button>
                                 </form>
                             </div>
                             <div>
-                                <form action="/item/cart" method="POST">
+                                <form action="/seller_item/stock" method="POST">
 
                                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
 
-                                    <input type="hidden" name='product' value=<%=JSON.stringify(value) %> />
+                                  
                                     <input type="hidden" name='product_id' value=<%=value.PRODUCT_ID %> />
                                     <div class="mb-4">
                                     
@@ -160,8 +160,8 @@
                                     
                                     </div>
                                     
-                                    <button class="btn btn-outline-primary  mt-5" name='butt' value='1' type="submit" >Add to Cart</button>
-                                    <button class="btn btn-outline-primary mt-5 ml-5" name="butt" value='2' type="submit">Add to Wishlist</button>
+                                    <button class="btn btn-outline-primary  mt-5" name='butt' value='1' type="submit" >Edit</button>
+                                    <button class="btn btn-outline-primary mt-5 ml-5" name="butt" value='2' type="submit">Add to Stock</button>
                                 </form>
                             </div>
                         </div>
