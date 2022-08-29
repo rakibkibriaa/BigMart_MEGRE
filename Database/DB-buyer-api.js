@@ -2,8 +2,21 @@ const database = require('./database');
 
 async function getAllCategories() {
     const sql = `
-        SELECT DISTINCT Category
-        FROM PRODUCT
+        SELECT  *
+        FROM 
+        (
+            SELECT CATEGORY
+            FROM PRODUCT 
+            GROUP BY CATEGORY
+        ) T JOIN 
+
+        (
+
+            SELECT CATEGORY,IMAGE_SRC
+            FROM CATEGORY_IMAGE
+
+        ) K 
+        ON(T.CATEGORY = K.CATEGORY)
         `;
     const binds = {
 
@@ -36,6 +49,18 @@ async function getAllProductsByTag(tag) {
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
+}
+async function addComplain(person_id, product_id, msg) {
+    const sql = `
+        INSERT INTO COMPLAIN VALUES (:person_id,:product_id,:msg)
+        `;
+    const binds = {
+        person_id: person_id,
+        product_id: product_id,
+        msg: msg
+    }
+
+    return (await database.execute(sql, binds, database.options));
 }
 async function getProductDetails(p_id) {
     const sql = `
@@ -219,6 +244,61 @@ async function canReview(product_id, person_id) {
     return (await database.execute(sql, binds, database.options)).rows;
 }
 
+async function getBundle(person_id) {
+
+    const sql = `
+        
+        SELECT SB.BUNDLE_ID
+        FROM SUBSCRIPTION S JOIN SUBSCRIPTION_HAS_BUNDLE SB
+        ON(S.SUBSCRIPTION_ID = SB.SUBSCRIPTION_ID)
+        WHERE S.BUYER_ID = :person_id
+
+        `;
+    const binds = {
+
+        person_id: person_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getDiscount(bundle_id) {
+
+    const sql = `
+        
+        SELECT DISCOUNT
+        FROM BUNDLE_DISCOUNT
+        WHERE BUNDLE_ID = :bundle_id
+
+        `;
+    const binds = {
+
+        bundle_id: bundle_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function totalReview(product_id, person_id) {
+    const sql = `
+        
+        SELECT COUNT(*) AS COUNT
+        FROM PERSON_REVIEW PR JOIN PRODUCT_REVIEW P
+        ON(PR.REVIEW_ID = P.REVIEW_ID) 
+        WHERE PR.PERSON_ID = :person_id
+        AND
+        P.PRODUCT_ID = :product_id  
+
+        `;
+    const binds = {
+        product_id: product_id,
+        person_id: person_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
 async function deleteItemFromCart(person_id, product_id) {
     const sql = `
         DELETE FROM CART
@@ -247,6 +327,45 @@ async function updateReview(review_id, msg, rating) {
     return;
 }
 
+async function myReview(person_id) {
+    const sql = `
+        SELECT *
+        FROM PERSON_REVIEW PR JOIN REVIEW R 
+        ON (PR.REVIEW_ID = R.REVIEW_ID) JOIN PRODUCT_REVIEW P
+        ON (R.REVIEW_ID = P.REVIEW_ID) JOIN PRODUCT T ON (P.PRODUCT_ID = T.PRODUCT_ID)
+        WHERE PR.PERSON_ID = :person_id
+   `;
+    const binds = {
+        person_id: person_id,
+    };
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function myWishList(person_id) {
+    const sql = `
+        SELECT *
+        FROM WISHLIST W JOIN PRODUCT P
+        ON(W.PRODUCT_ID = P.PRODUCT_ID)
+        WHERE PERSON_ID = :person_id
+        AND STATUS <> 'Added'
+   `;
+    const binds = {
+        person_id: person_id,
+    };
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function myWishListAdded(person_id) {
+    const sql = `
+        SELECT *
+        FROM WISHLIST W JOIN PRODUCT P
+        ON(W.PRODUCT_ID = P.PRODUCT_ID)
+        WHERE PERSON_ID = :person_id
+        AND STATUS = 'Added'
+   `;
+    const binds = {
+        person_id: person_id,
+    };
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function deleteReview(review_id) {
     const sql = `
         DELETE FROM PERSON_REVIEW WHERE REVIEW_ID = :review_id
@@ -346,6 +465,35 @@ async function isInSubscription(subscription_id, person_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+
+async function getProductsByBundle(bundle_id) {
+    const sql = `
+        SELECT PRODUCT_ID
+        FROM BUNDLE
+        WHERE BUNDLE_ID = :bundle_id
+        `;
+    const binds = {
+        bundle_id: bundle_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getPrice(person_id) {
+    const sql = `
+        SELECT SUM(C.QUANTITY * P.PRICE) AS SUM
+        FROM CART C JOIN PRODUCT P
+        ON(C.PRODUCT_ID = P.PRODUCT_ID)
+        WHERE C.CART_ID IS NULL AND
+        C.PERSON_ID = :person_id
+        `;
+    const binds = {
+        person_id: person_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function deleteBuyerFromSubscription(subscription_id, person_id) {
     const sql = `
         UPDATE SUBSCRIPTION
@@ -356,6 +504,20 @@ async function deleteBuyerFromSubscription(subscription_id, person_id) {
     const binds = {
         subscription_id: subscription_id,
         person_id: person_id,
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
+async function addToWishList(person_id, product_id, quantity, status) {
+    const sql = `
+        INSERT INTO WISHLIST VALUES(:person_id,:product_id,:quantity,:status)
+        `;
+    const binds = {
+        product_id: product_id,
+        person_id: person_id,
+        quantity: quantity,
+        status: status
+
     }
 
     return (await database.execute(sql, binds, database.options));
@@ -401,4 +563,14 @@ module.exports = {
     avgRating,
     updateReview,
     deleteReview,
+    myReview,
+    totalReview,
+    getBundle,
+    getProductsByBundle,
+    getDiscount,
+    getPrice,
+    addToWishList,
+    myWishList,
+    myWishListAdded,
+    addComplain
 }

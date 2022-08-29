@@ -102,7 +102,7 @@
             
             <div class="row row-cols-md-3 g-4 ml-10 mt-10 " ">
           
-                    <% for(var i=0; i < value.length;i++) {%>
+                    
                         
                             <div class="col-3 mb-5" >
 
@@ -111,21 +111,20 @@
 
                                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 
-                                    <div class="card"  name = 'category' style="width: 15rem;" >
+                                    <div class="card"  name = 'category' style="width: 15rem" >
                                         
                                         
                                             <div class="d-flex justify-content-center">
 
                                                 <button class = "btn" type="submit">
-                                                
-                                                    <img src="/img/<%= value[i].IMAGE_SRC %>"  class="rounded mx-auto d-block" alt="..." max>
+
+                                                    <img src="/img/product_default.png"  class="rounded mx-auto d-block" alt="...">
 
                                                         <div class="card-body">
                                                             
-                                                            <input type='hidden' name='category' value= <%= value[i].CATEGORY %> />
-                                                                <h5 class="card-title" , name="title" value="haha1"><%= value[i].CATEGORY %></h5>
-                                                                <!--<p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                                                                <p class="card-text"><small class="text-muted">Price: <%= value[i].PRICE %></small></p> -->
+                                                            <input type='hidden' name='category' value= <%= value %> />
+                                                                <h5 class="card-title" , name="title" value="haha1"> <%= value %> </h5>
+                                                            
                                                         </div> 
 
                                                 </button>
@@ -135,18 +134,18 @@
                                     </div>
 
                                 </form>
-                                <form action="/edit_category_picture" method="POST">
-                                    <input type='hidden' name='category' value= <%= value[i].CATEGORY %> />
-                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
 
-                                    <div>
-                                        
-                                        <button class="btn btn-success mt-3" type="submit" name='butt' value='1'>Edit Picture</button>
-                                    </div>
+                                <form action="/admin_picture_updated" method="POST">
+                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                    <input type='hidden' name='category' value= <%= value %> />
+                                    <label for="img">Select image:</label>
+                                    <input type="file" id="img" name="img" accept="image/*">
+                                    <button type="submit" class="btn btn-success btn-lg mt-4 mb-5" name='butt' value='2'>SAVE</button>
                                 </form>
+                              
                             </div>
                         
-                    <%} %>
+                 
                     
             </div>
 

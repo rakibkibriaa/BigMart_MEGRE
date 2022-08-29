@@ -51,13 +51,12 @@ router.post("/item", async (req, res) => {
 
   let avgRating = await DB_Buyer.avgRating(req.body.product_id);
 
+  let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
 
-  console.log(avgRating[0]);
-
-
+  console.log(totalReview[0])
   res.render("item.ejs", {
     value: result1[0], user: user, reviews: reviews,
-    canReview: canreview[0].COUNT, avgRating: avgRating[0]
+    canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0]
   });
 
 });
@@ -95,6 +94,12 @@ router.post("/item/cart", async (req, res) => {
   }
   else if (buttonPressed == 2) {
     console.log("butt2"); ///wishlist
+
+    let quantity = req.body.quantity;
+    let product_id = result.PRODUCT_ID;
+
+    await DB_Buyer.addToWishList(user.person_id, product_id, quantity, 'Pending')
+
   }
   else if (buttonPressed == 3) {
     let category = req.body.category;
@@ -114,7 +119,40 @@ router.post("/clicked_cart", async (req, res) => {
 
   let cnt = await DB_Buyer.IsInOrder(user.person_id);
 
+  const mySet = new Set()
 
+  let bundles = await DB_Buyer.getBundle(user.person_id)
+
+  for (let i = 0; i < bundles.length; i++) {
+    let prod = await DB_Buyer.getProductsByBundle(bundles[i].BUNDLE_ID);
+
+    let cnt = 0;
+
+    for (let j = 0; j < prod.length; j++) {
+      for (let l = 0; l < result.length; l++) {
+        if (prod[j].PRODUCT_ID == result[l].PRODUCT_ID) {
+          cnt++;
+        }
+      }
+
+    }
+
+    if (cnt == prod.length) {
+      mySet.add(bundles[i].BUNDLE_ID)
+    }
+
+  }
+  let maxi = 0;
+  for (const item of mySet) {
+    let val = await DB_Buyer.getDiscount(item);
+    maxi = Math.max(maxi, val[0].DISCOUNT)
+  }
+
+  let cartPrice = await DB_Buyer.getPrice(user.person_id);
+
+  let discPrice = cartPrice[0].SUM - (cartPrice[0].SUM * maxi) / 100;
+
+  console.log(maxi + '%')
   let buttonPressed = req.body.butt;
 
   console.log(buttonPressed)
@@ -126,38 +164,42 @@ router.post("/clicked_cart", async (req, res) => {
 
 
     result = await DB_Buyer.getCartItems(user.person_id);
+
+    cartPrice = await DB_Buyer.getPrice(user.person_id);
+    discPrice = cartPrice[0].SUM - (cartPrice[0].SUM * maxi) / 100;
   }
 
   else if (buttonPressed == 2) {
+
+
 
     const uuid = crypto.randomBytes(16).toString("hex");
 
     let today = new Date();
 
-    //var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
     let date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear(); //+ ' at ' + time;
 
     await DB_Buyer.addToOrder(uuid, user.person_id, date, 'Pending');
+
+    result = await DB_Buyer.getCartItems(user.person_id);
+
+    cartPrice = await DB_Buyer.getPrice(user.person_id);
+    discPrice = cartPrice[0].SUM - (cartPrice[0].SUM * maxi) / 100;
 
     result = await DB_Buyer.getCartItems(uuid, user.person_id);
 
     console.log(result);
   }
 
-  let original_price = 0;
 
-  for (let i = 0; i < result.length; i++) {
-    original_price += result[i].PRICE;
-  }
-  console.log(original_price)
   return res.render("cart_items.ejs",
     {
       value: result, user: user,
+      cartPrice: cartPrice[0].SUM + 0,
+      discPrice: discPrice
 
     });
-
-
 
 
 });
@@ -208,10 +250,12 @@ router.post("/review", async (req, res) => {
 
   console.log(reviews)
 
+  let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
 
+  console.log(totalReview)
   res.render("item.ejs", {
     value: result1[0], user: user, reviews: reviews,
-    canReview: canreview[0].COUNT, avgRating: avgRating[0]
+    canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0]
   });
 
 
@@ -305,11 +349,12 @@ router.post("/logged_in", async (req, res) => {
       let isBuyer = await DB_auth.isInBuyer(username)
       let isAdmin = await DB_auth.isInAdmin(username)
       let isSeller = await DB_auth.isInSeller(username)
-
+      let categories = await DB_Buyer.getAllCategories();
 
       if (isAdmin.length > 0) {
         res.render('admin_logged_in.ejs', {
-          user: user
+          user: user,
+          value: categories
         })
       }
 
@@ -619,13 +664,14 @@ router.post("/edit_review", async (req, res) => {
 
     let avgRating = await DB_Buyer.avgRating(req.body.product_id);
 
+    let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
 
     console.log(avgRating[0]);
 
 
     res.render("item.ejs", {
       value: result1[0], user: user, reviews: reviews,
-      canReview: canreview[0].COUNT, avgRating: avgRating[0]
+      canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0]
     });
 
 
@@ -661,12 +707,92 @@ router.post("/save_review", async (req, res) => {
 
 
   let reviews = await DB_Buyer.getReviews(req.body.product_id);
+  let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
 
   res.render("item.ejs", {
     value: result1[0], user: user, reviews: reviews,
-    canReview: canreview[0].COUNT, avgRating: avgRating[0]
+    canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0]
   });
 
 });
+
+router.post("/my_review", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  let myReview = await DB_Buyer.myReview(user.person_id);
+
+  res.render("my_review.ejs", {
+    value: myReview, user: user
+  });
+
+});
+
+
+router.post("/wishlist", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  let myWishList = await DB_Buyer.myWishList(user.person_id);
+
+  let added = await DB_Buyer.myWishListAdded(user.person_id);
+  res.render("wishlist.ejs", {
+    value: myWishList, user: user, added: added
+  });
+
+});
+
+router.post("/complain", async (req, res) => {
+
+  let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
+
+
+  let user = JSON.parse(req.body.user_info);
+
+
+
+
+  res.render("complain.ejs", {
+    value: result1[0], user: user
+  });
+
+
+});
+
+router.post("/send_complain", async (req, res) => {
+
+  let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
+
+  let user = JSON.parse(req.body.user_info);
+
+
+
+  let msg = req.body.complain_msg;
+
+  await DB_Buyer.addComplain(user.person_id, req.body.product_id, msg)
+  // await DB_Buyer.updateReview(review_id, msg, rating);
+
+
+
+  console.log(user);
+
+  let canreview = await DB_Buyer.canReview(req.body.product_id, user.person_id);
+
+  let avgRating = await DB_Buyer.avgRating(req.body.product_id);
+
+
+
+  let reviews = await DB_Buyer.getReviews(req.body.product_id);
+  let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
+
+  res.render("item.ejs", {
+    value: result1[0], user: user, reviews: reviews,
+    canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0]
+  });
+
+
+});
+
+
 
 module.exports = router;

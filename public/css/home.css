@@ -3,6 +3,8 @@ button:focus {
 }
 
 img {
-    max-width: 15rem;
 
+    width: 230px;
+    height: 230px;
+    object-fit: cover;
 }

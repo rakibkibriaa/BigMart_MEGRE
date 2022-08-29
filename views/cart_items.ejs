@@ -36,13 +36,41 @@
     
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item pr-4">
-                    <a class="nav-link active" aria-current="page" href="#">
-    
-                        <button>
-                            Subscribe
-                        </button>
-                    </a>
+                       
+                            <form action="/my_review" method="POST">
+                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                <a class="nav-link active" href="#">
+                                    <button type="submit">
+                                        My Review
+                                    </button>
+                                </a>
+                            </form>
+                       
                 </li>
+                 <li class="nav-item pr-4">
+                       
+                            <form action="/wishlist" method="POST">
+                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                <a class="nav-link active" href="#">
+                                    <button type="submit">
+                                        My Wishlist
+                                    </button>
+                                </a>
+                            </form>
+                       
+                    </li>
+                <li class="nav-item pr-4">
+                       
+                            <form action="/subscribe" method="POST">
+                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                <a class="nav-link active" href="#">
+                                    <button type="submit">
+                                        Subscribe
+                                    </button>
+                                </a>
+                            </form>
+                       
+                    </li>
                 <li class="nav-item pr-4">
     
                     <form action="/clicked_cart" method="POST">
@@ -92,8 +120,16 @@
 
         </h1>
 
-       
+         <div class="d-flex justify-content-center">
+        <h5>Original Price: <%= cartPrice %> taka
 
+        </h5>
+        </div>
+        <div class="d-flex justify-content-center mb-4">
+        <h5>Discounted Price: <%= discPrice %> taka
+
+        </h5>
+        </div>
         <div class="row row-cols-md-3 g-4 ml-10 mt-10">
           
             <% for(var i=0; i < value.length;i++) {%>

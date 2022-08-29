@@ -227,6 +227,59 @@ async function getBundle(subscription_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getCategoryImage(category) {
+    const sql = `
+        SELECT *
+        FROM CATEGORY_IMAGE
+        WHERE CATEGORY = :category
+        
+        `;
+    const binds = {
+        category: category
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getComplain(product_id) {
+    const sql = `
+        SELECT *
+        FROM COMPLAIN C JOIN PERSON P
+        ON(C.PERSON_ID = P.PERSON_ID)
+        WHERE PRODUCT_ID = :product_id
+        
+        `;
+    const binds = {
+        product_id: product_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getAllComplain() {
+    const sql = `
+        SELECT * 
+        FROM COMPLAIN C JOIN PERSON P 
+        ON(C.PERSON_ID = P.PERSON_ID) JOIN PRODUCT PR
+        ON(C.PRODUCT_ID = PR.PRODUCT_ID)
+        `;
+    const binds = {
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function totalComplain(product_id) {
+    const sql = `
+        SELECT COUNT(*) AS COUNT
+        FROM COMPLAIN
+        WHERE PRODUCT_ID = :product_id
+        
+        `;
+    const binds = {
+        product_id: product_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 
 async function deleteItemFromBundle(bundle_id, product_id) {
     const sql = `
@@ -254,6 +307,20 @@ async function updateBundleDiscount(bundle_id, discount) {
     return;
 }
 
+async function updatePicture(category, img) {
+    const sql = `
+    BEGIN
+	    UPDATE_PICTURE(:category,:img);
+    END;
+   `;
+    const binds = {
+        category: category,
+        img: img
+    };
+    (await database.execute(sql, binds, database.options));
+    return;
+}
+
 module.exports = {
     getOrderList,
     changeOrderStatus,
@@ -274,4 +341,10 @@ module.exports = {
     deleteBundleFromBUNDLE_DISCOUNT,
     getBundleDiscount,
     updateBundleDiscount,
+    updatePicture,
+    getCategoryImage,
+    getComplain,
+    totalComplain,
+    getAllComplain
+
 }

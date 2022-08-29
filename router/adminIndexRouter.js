@@ -11,7 +11,12 @@ router.post("/admin_logged_in", async (req, res) => {
 
     let user = JSON.parse(req.body.user_info);
 
+    let categories = await DB_Buyer.getAllCategories();
+
+    console.log(categories);
+
     res.render("admin_logged_in.ejs", {
+        value: categories,
         user: user
     });
 });
@@ -426,7 +431,129 @@ router.post('/add_new_item', async (req, res) => {
         bundle_id: bundle_id
     })
 
+});
+
+router.post('/edit_category_picture', async (req, res) => {
+
+    let user = JSON.parse(req.body.user_info);
+
+    let categoryName = req.body.category;
+
+    res.render('admin_select_picture.ejs', {
+        value: categoryName,
+        user: user
+
+    })
+
 })
+
+router.post('/admin_picture_updated', async (req, res) => {
+
+    let user = JSON.parse(req.body.user_info);
+
+    let category = req.body.category;
+
+    let img = req.body.img;
+
+    await DB_admin.updatePicture(category, img);
+
+    console.log(img)
+
+
+
+})
+
+router.post('/admin_products', async (req, res) => {
+
+
+    let products = await DB_Buyer.getAllProducts(req.body.category);
+
+
+
+    let user = JSON.parse(req.body.user_info);
+
+    res.render("admin_products.ejs", { value: products, user: user });
+
+
+})
+
+router.post('/admin_item', async (req, res) => {
+    let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
+
+    let user = JSON.parse(req.body.user_info);
+
+    let reviews = await DB_Buyer.getReviews(req.body.product_id);
+
+    console.log(user);
+
+
+    let avgRating = await DB_Buyer.avgRating(req.body.product_id);
+
+    let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
+
+    let complain = await DB_admin.getComplain(req.body.product_id);
+
+    let totalComplain = await DB_admin.totalComplain(req.body.product_id);
+
+
+    console.log(totalComplain[0].COUNT)
+    res.render("admin_item.ejs", {
+        value: result1[0], user: user, reviews: reviews,
+        avgRating: avgRating[0], totalReview: totalReview[0],
+        complain: complain, totalComplain: totalComplain[0].COUNT
+    });
+})
+
+router.post('/admin_complain', async (req, res) => {
+
+    let user = JSON.parse(req.body.user_info);
+    let complain = await DB_admin.getAllComplain();
+
+    console.log(complain)
+    res.render("admin_complain.ejs", {
+        value: complain, user: user,
+
+    });
+})
+router.post('/ban', async (req, res) => {
+
+    let products = await DB_Buyer.getAllProducts(req.body.tag);
+
+
+
+    let user = JSON.parse(req.body.user_info);
+
+    res.render("admin_products.ejs", { value: products, user: user });
+
+
+    await DB_admin.banItem(req.body.product_id);
+
+    /*let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
+
+    let user = JSON.parse(req.body.user_info);
+
+    let reviews = await DB_Buyer.getReviews(req.body.product_id);
+
+    console.log(user);
+
+
+    let avgRating = await DB_Buyer.avgRating(req.body.product_id);
+
+    let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
+
+    let complain = await DB_admin.getComplain(req.body.product_id);
+
+    let totalComplain = await DB_admin.totalComplain(req.body.product_id);
+
+
+    console.log(totalComplain[0].COUNT)
+    res.render("admin_item.ejs", {
+        value: result1[0], user: user, reviews: reviews,
+        avgRating: avgRating[0], totalReview: totalReview[0],
+        complain: complain, totalComplain: totalComplain[0].COUNT
+    });*/
+})
+
 
 
 
