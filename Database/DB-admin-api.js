@@ -68,6 +68,7 @@ async function changeOrderStatus(order_id, status) {
     return (await database.execute(sql, binds, database.options));
 }
 
+
 async function addNewSubscriptionPlan(subscription_id, price, name) {
     const sql = `
         INSERT INTO SUBSCRIPTION_PLAN VALUES(:subscription_id,:price,:name)
@@ -320,6 +321,28 @@ async function updatePicture(category, img) {
     (await database.execute(sql, binds, database.options));
     return;
 }
+async function getSellerList() {
+    const sql = `
+        SELECT *
+        FROM SELLER_APPROVAL
+        
+    `;
+    const binds = {
+
+    }
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getSellerById(SELLER_ID) {
+    const sql = `
+        SELECT *
+        FROM PERSON
+        WHERE PERSON_ID = :SELLER_ID
+    `;
+    const binds = {
+        SELLER_ID: SELLER_ID
+    }
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 
 module.exports = {
     getOrderList,
@@ -345,6 +368,11 @@ module.exports = {
     getCategoryImage,
     getComplain,
     totalComplain,
-    getAllComplain
-
+    getAllComplain,
+    getOrderList,
+    changeOrderStatus,
+    getSellerList,
+    getSellerById
 }
+
+

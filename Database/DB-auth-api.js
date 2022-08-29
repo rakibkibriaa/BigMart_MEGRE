@@ -70,7 +70,7 @@ async function createNewUser(user) {
     else if (user.type.localeCompare('seller') === 0) {
         const sql_seller = `
             INSERT INTO
-                Seller(seller_id)
+                SELLER_APPROVAL(seller_id)
             VALUES
                 (:seller_id)
         `;
@@ -117,6 +117,24 @@ async function getLoginInfoByUsername(username) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+
+async function getIDByUsername(username) {
+    const sql = `
+        SELECT 
+            PERSON_ID
+        FROM 
+            Person
+        WHERE 
+            USERNAME = :username
+        `;
+    const binds = {
+        username: username
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+
 
 async function isInAdmin(username) {
     const sql = `
@@ -168,6 +186,56 @@ async function isInSeller(username) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function waiting(username){
+    const sql = `
+    SELECT 
+        *
+    FROM 
+        Person P JOIN SELLER_APPROVAL S
+        ON(P.PERSON_ID = S.SELLER_ID)
+    WHERE 
+        P.USERNAME = :username
+    `;
+const binds = {
+    username: username
+}
+
+return (await database.execute(sql, binds, database.options)).rows;   
+}
+
+async function addSeller(seller_id){
+    const sql = `
+        INSERT INTO 
+            SELLER(SELLER_ID)
+        VALUES(:seller_id)
+    `;
+    const binds = {
+        seller_id : seller_id
+    }
+    return (await database.execute(sql, binds, {}));
+}
+async function deleteSeller(seller_id){
+    const sql = `
+        DELETE FROM
+            PERSON
+        WHERE PERSON_ID = :seller_id
+    `;
+    const binds = {
+        seller_id : seller_id
+    }
+    return (await database.execute(sql,binds, {}));
+}
+async function deleteApproval(seller_id){
+    const sql = `
+        DELETE FROM
+            SELLER_APPROVAL
+        WHERE SELLER_ID = :seller_id
+    `;
+    const binds = {
+        seller_id : seller_id
+    }
+    return (await database.execute(sql,binds, {}));
+}
 
 async function getLoginInfoByID(id) {
     const sql = `
@@ -198,5 +266,10 @@ module.exports = {
     getLoginInfoByUsername,
     isInAdmin,
     isInBuyer,
-    isInSeller
+    isInSeller,
+    waiting,
+    addSeller,
+    deleteSeller,
+    deleteApproval,
+    getIDByUsername
 }
