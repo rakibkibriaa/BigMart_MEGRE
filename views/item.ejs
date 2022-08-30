@@ -146,7 +146,7 @@
 
                                     <input type="hidden" name="tag" value=<%= value.CATEGORY %> />
                                     <input type="hidden" name="seller_name" value=<%= seller.NAME %> />
-                                    
+                                    <p class = "d-inline  card-text font-weight-bold">Seller Name:</p>
                                     <button class="d-inline btn btn-outline-primary ml-3" name='butt' value='3' type="submit"><%= seller.NAME %></button>
                                 </form>
                             </div>
@@ -160,7 +160,7 @@
                                     <div class="mb-4">
                                     
                                         <p class="d-inline  card-text font-weight-bold"> Quantity:</p>
-                                        <input class="d-inline ml-2 col-lg-2 form-control" name="quantity">
+                                        <input type= "number" min ="1" class="d-inline ml-2 col-lg-2 form-control" name="quantity">
                                     
                                     </div>
                                     <div class="mb-4">
@@ -184,6 +184,7 @@
                                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                     <input type="hidden" name='product' value=<%=JSON.stringify(value) %> />
                                     <input type="hidden" name='product_id' value=<%=value.PRODUCT_ID %> />
+                                    <input type="hidden" name="seller_name" value= <%= seller.NAME %> />
                                         <button class="btn btn-outline-danger mt-5 ml-5" name="butt" value='3' type="submit">Complain</button>
                                     </form>
                                 </div>

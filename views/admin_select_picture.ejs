@@ -13,7 +13,7 @@
 <body>
     
     
-        <nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg" >
+<nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg" >
             <div class="container-fluid" id = 'nav'>
                 <a class="navbar-brand">
                     
@@ -73,20 +73,6 @@
                    
                     </li>
                     <li class="nav-item pr-4">
-                       
-                            <form action="/list_order" method="POST">
-                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-                                <a class="nav-link active" href="#">
-                                    <button type="submit">
-                                        Orders
-                                    </button>
-                                </a>
-                            </form>
-                       
-                    </li>
-
-                   
-                    <li class="nav-item pr-4">
                         <form action="/admin_profile" method="POST">
                             <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                             <a class="nav-link active" href="#">
@@ -97,6 +83,7 @@
                         </form>
                     
                     </li>
+                    
                     <li class="nav-item">
                         <form action="/logout" method="POST">
                             <a class="nav-link active" href="#">
@@ -111,8 +98,6 @@
             </div>
           
         </nav>
-
-    </div>
 
     <div class="Sections">
 

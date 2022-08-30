@@ -22,40 +22,76 @@
                         <input type="hidden" name="category" value="" />
                         <input type="hidden" name="user_info" value=<%=JSON.stringify(user) %> />
                         <button class="btn btn-info bg-dark" type="submit">
-                            <h1>BiggMart</h1>
+                            <h1>BigMart</h1>
                         </button>
                     </form>
                     
                 </a>
 
-                <form class="d-flex" action="/search" method="POST">
+                <form class="d-flex" action="/seller_search" method="POST">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
                 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item pr-4">
+                    <!-- <li class="nav-item pr-4">
                         <a class="nav-link active" aria-current="page" href="#">
                             
                             <button>
-                                Subscription
+                                Subscribe
                             </button>
                         </a>
+                    </li> -->
+                    <li class="nav-item pr-4">
+                        <!-- seller Wishlist -->
+                        
+                        <form action="/seller_complainlist" method="POST"> 
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Complain
+                                </button>
+                            </a>
+                        </form>
+        
+                    </li>
+                    <li class="nav-item pr-4">
+    
+                        <form action="/seller_wishlist" method="POST">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Wishlist
+                                </button>
+                            </a>
+                        </form>
+        
                     </li>
                     <li class="nav-item pr-4">
                        
-                            <form action="/seller_list_order" method="POST">
+                            <form action="/add_product" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
                                     <button type="submit">
-                                        Orders
+                                        Add
                                     </button>
                                 </a>
                             </form>
                        
                     </li>
-
+                    <li class="nav-item pr-4">
+                       
+                        <form action="/seller_list_order" method="POST">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Orders
+                                </button>
+                            </a>
+                        </form>
+                   
+                    </li>
                    
                     <li class="nav-item pr-4">
                         <form action="/profile" method="POST">
@@ -82,9 +118,6 @@
             </div>
           
         </nav>
-
-
-    </div>
 
         <div class="card-deck">
                 

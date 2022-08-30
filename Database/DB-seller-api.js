@@ -81,7 +81,7 @@ async function getAllProducts(category, name) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function addProduct(product,user){
+async function addProduct(product, user) {
     const sql = `
         INSERT INTO
             PRODUCT(PRODUCT_ID, NAME, PRICE, CATEGORY, QUANTITY, TOTAL_SALES)
@@ -89,7 +89,7 @@ async function addProduct(product,user){
             (:product_id, :name, :price, :category, :quantity, :total_sales)
     `;
     const binds = {
-        product_id : product.product_id,
+        product_id: product.product_id,
         name: product.name,
         price: product.price,
         category: product.category,
@@ -107,13 +107,13 @@ async function addProduct(product,user){
         product_id: product.product_id,
         seller_id: user.seller_id,
     }
-    await database.execute(storage_sql, storage_binds,{});
+    await database.execute(storage_sql, storage_binds, {});
 
-    return await database.execute(sql, binds,{});
+    return await database.execute(sql, binds, {});
 }
 
 
-async function editProduct(name, price, quantity, product_id){
+async function editProduct(name, price, quantity, product_id) {
     const sql = `
         
         UPDATE PRODUCT SET 
@@ -124,17 +124,17 @@ async function editProduct(name, price, quantity, product_id){
         WHERE PRODUCT_ID = :product_id
     `;
     const binds = {
-        product_id :product_id,
-        name:name,
-        price:price,
-        quantity:quantity,
+        product_id: product_id,
+        name: name,
+        price: price,
+        quantity: quantity,
     }
-    
 
-    return await database.execute(sql, binds,{});
+
+    return await database.execute(sql, binds, {});
 }
 
-async function getAllProductsByTag(tag,name) {
+async function getAllProductsByTag(tag, name) {
     const sql = `
         SELECT *
         FROM (STORAGE S JOIN PRODUCT P
@@ -191,13 +191,13 @@ async function addToStock(product_id, quantity) {
     const binds = {
         product_id: product_id,
         quantity: quantity
-    
+
     }
 
     return (await database.execute(sql, binds, database.options));
 }
 
-async function addToOrder(order_id, person_id, dateOfOrder,status) {
+async function addToOrder(order_id, person_id, dateOfOrder, status) {
 
     const sql = `
         INSERT INTO ORDER_TABLE
@@ -363,7 +363,7 @@ async function getWishlist(user_id) {
     JOIN STORAGE S
     ON(S.PRODUCT_ID = P.PRODUCT_ID)
     WHERE S.SELLER_ID = :user_id
-    AND W.STATUS <> 'Delivered'
+    AND W.STATUS <> 'Approved'
 
    `;
     const binds = {
@@ -402,7 +402,7 @@ async function getAcceptedOrder(user_id) {
     JOIN STORAGE S
     ON(S.PRODUCT_ID = P.PRODUCT_ID)
     WHERE S.SELLER_ID = :user_id
-    AND W.STATUS = 'Delivered'
+    AND W.STATUS = 'Approved'
 
    `;
     const binds = {
@@ -445,7 +445,7 @@ async function getComplainlist(user_id) {
     };
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function updatePicture(category, img,p_id) {
+async function updatePicture(category, img, p_id) {
     const sql = `
     BEGIN
 	    UPDATE_PICTURE_SELLER(:category,:img,:p_id);
@@ -454,7 +454,7 @@ async function updatePicture(category, img,p_id) {
     const binds = {
         category: category,
         img: img,
-        p_id:p_id
+        p_id: p_id
     };
     (await database.execute(sql, binds, database.options));
     return;
