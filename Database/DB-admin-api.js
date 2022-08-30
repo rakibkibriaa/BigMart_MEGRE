@@ -77,6 +77,16 @@ async function banSeller(product_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function ban_seller(seller_id) {
+    const sql = `
+        DELETE FROM SELLER WHERE SELLER_ID = :seller_id
+        `;
+    const binds = {
+        seller_id: seller_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function getBundleCount(s_id) {
     const sql = `
         SELECT COUNT(DISTINCT(bundle_id)) as COUNT
@@ -436,8 +446,49 @@ async function getTotalSoldProducts(SELLER_ID) {
     }
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getTotalSoldProducts(SELLER_ID) {
+    const sql = `
+        SELECT (SUM(P.TOTAL_SALES) / COUNT(*)) AS SALE
+        FROM ORDER_TABLE O JOIN CART C
+        ON (O.ORDER_ID = C.CART_ID) JOIN STORAGE S
+        ON (S.PRODUCT_ID = C.PRODUCT_ID)  JOIN PRODUCT P
+        ON(S.PRODUCT_ID = P.PRODUCT_ID)
+        WHERE S.SELLER_ID = :SELLER_ID
+        GROUP BY (S.SELLER_ID)
+    `;
+    const binds = {
+        SELLER_ID: SELLER_ID
+    }
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getSellerName(SELLER_ID) {
+    const sql = `
+        SELECT *
+        FROM SELLER S JOIN PERSON P
+        ON (S.SELLER_ID = P.PERSON_ID)
+        AND S.SELLER_ID = :SELLER_ID
+    `;
+    const binds = {
+        SELLER_ID: SELLER_ID
+    }
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getAllSellerByTag(tag) {
+    const sql = `
+         SELECT *
+         FROM SELLER S JOIN PERSON P
+         ON (S.SELLER_ID = P.PERSON_ID)
+         WHERE ( UPPER(P.NAME) LIKE '%'||:tag||'%')
+        `;
+    const binds = {
+        tag: tag
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 
 module.exports = {
+    getSellerName,
     getOrderList,
     changeOrderStatus,
     getSubscriptonPlans,
@@ -472,7 +523,10 @@ module.exports = {
     getComplainCount,
     getTotalProducts,
     getSellerRating,
-    getTotalSoldProducts
+    getTotalSoldProducts,
+    ban_seller,
+    getAllSellerByTag
+
 }
 
 

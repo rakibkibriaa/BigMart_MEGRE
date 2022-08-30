@@ -100,7 +100,6 @@ router.post("/item/cart", async (req, res) => {
       return res.render("alert.ejs",
         {
           message: message
-
         });
     }
 
@@ -112,17 +111,17 @@ router.post("/item/cart", async (req, res) => {
     let product_id = result.PRODUCT_ID;
 
 
-    let isInWishlist =  await DB_Buyer.isInWishlist(user.product_id);
+    let isInWishlist = await DB_Buyer.isInWishlist(user.product_id);
     console.log("consoling isinwishlist");
     console.log(isInWishlist);
-    if(isInWishlist.length >0){
+    if (isInWishlist.length > 0) {
       console.log("it enters is in wishlist");
-      await DB_Buyer.updateWishlist(user.product_id,quantity);
+      await DB_Buyer.updateWishlist(user.product_id, quantity);
     }
-    else{
+    else {
       await DB_Buyer.addToWishList(user.person_id, product_id, quantity, 'Pending');
     }
-    
+
 
 
   }
@@ -564,6 +563,7 @@ router.post('/profile', async (req, res) => {
 
   order_brief.sort((a, b) => (a.ORDER_DATE > b.ORDER_DATE) ? 1 : ((b.ORDER_DATE > a.ORDER_DATE) ? -1 : 0))
 
+  console.log(results[0])
   res.render('profile.ejs', {
     user: user,
     value: results[0],

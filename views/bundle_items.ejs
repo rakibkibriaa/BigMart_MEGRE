@@ -37,6 +37,18 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item pr-4">
                        
+                            <form action="/admin_seller_view" method="POST">
+                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                <a class="nav-link active" href="#">
+                                    <button type="submit">
+                                        Sellers
+                                    </button>
+                                </a>
+                            </form>
+                       
+                    </li>
+                    <li class="nav-item pr-4">
+                       
                             <form action="/admin_complain" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">

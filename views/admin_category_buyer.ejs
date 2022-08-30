@@ -28,11 +28,11 @@
                 
             </a>
 
-            <form class="d-flex" action="/search" method="POST">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
-                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+            <form class="d-flex" action="/admin_search" method="POST">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
             
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item pr-4">
@@ -114,8 +114,19 @@
 
     </div>
 
+    <h1>Name: <%= seller %> </h1>
     <div class="Sections">
+         <form action="/ban_seller" method="POST">
+            <div class="d-flex justify-content-center">
+                
+                  <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                  <input type="hidden" name='seller_id' value=<%= seller_id %> />
+                   <input type="hidden" name='seller_name' value=<%= seller %> />
 
+                <button class="btn btn-outline-danger ml-4 mt-3 mb-5" name='butt' value ='2' type="submit" >Ban Seller</button>
+                        
+            </div>
+        </form>
         <div class="Categories ml-5">
 
             <h1 class="display-4">Categories</h1>
@@ -133,6 +144,7 @@
 
                                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                     <input type="hidden" name='seller' value=<%= seller %> />
+                                     <input type="hidden" name='seller_id' value=<%= seller_id %> />
                                 
                                     <div class="card"  name = 'category' style="width: 15rem" >
                                         

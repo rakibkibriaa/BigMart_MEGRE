@@ -45,7 +45,7 @@ async function getOrderList() {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function getAllCategories(name) {
+async function getAllCategories(seller_id) {
 
     const sql = `
         SELECT DISTINCT P.Category
@@ -54,11 +54,10 @@ async function getAllCategories(name) {
         ON S.PRODUCT_ID = P.PRODUCT_ID
         JOIN PERSON PS
         ON S.SELLER_ID = PS.PERSON_ID
-        WHERE 
-         PS.NAME = :name
+        WHERE S.SELLER_ID = :seller_id
         `;
     const binds = {
-        name: name
+        seller_id: seller_id
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
@@ -173,7 +172,7 @@ async function getProductId(p_name) {
         WHERE NAME = :p_name
         `;
     const binds = {
-        p_name:p_name
+        p_name: p_name
     }
 
     return (await database.execute(sql, binds, database.options)).rows;

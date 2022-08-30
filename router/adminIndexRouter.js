@@ -520,37 +520,111 @@ router.post('/admin_item', async (req, res) => {
     res.render("admin_item.ejs", {
         value: result1[0], user: user, reviews: reviews,
         avgRating: avgRating[0], totalReview: totalReview[0],
-        complain: complain, totalComplain: totalComplain[0].COUNT, seller:seller[0]
+        complain: complain, totalComplain: totalComplain[0].COUNT, seller: seller[0]
     });
 })
 
 router.post("/admin_category_buyer", async (req, res) => {
 
     let user = JSON.parse(req.body.user_info);
-    let seller = req.body.seller_name;
-    let categories = await DB_Seller.getAllCategories(seller);
-  
-    res.render("admin_category_buyer.ejs", {
-      value: categories,
-      user: user,
-      seller: seller
-    });
-  
-  });
 
-  router.post("/admin_products_buyer", async (req, res) => {
+    let seller_id = req.body.seller_id;
+
+    let seller = await DB_admin.getSellerName(seller_id);
+
+    let categories = await DB_Seller.getAllCategories(seller_id);
+
+    console.log(seller)
+
+    res.render("admin_category_buyer.ejs", {
+        value: categories,
+        user: user,
+        seller: seller[0].NAME,
+        seller_id: seller_id
+    });
+
+});
+router.post("/admin_search", async (req, res) => {
+
+    let user = JSON.parse(req.body.user_info);
+
+    let tag = req.body.tag;
+
+    let products = await DB_Buyer.getAllProductsByTag(tag.toUpperCase());
+
+
+
+    res.render("admin_search.ejs", { value: products, tag: tag, user: user });
+
+});
+router.post("/admin_seller_search", async (req, res) => {
+
+    let user = JSON.parse(req.body.user_info);
+
+    let tag = req.body.tag;
+
+    let sellerList = await DB_admin.getAllSellerByTag(tag.toUpperCase());
+
+
+    for (let i = 0; i < sellerList.length; i++) {
+        let cnt = await DB_admin.getComplainCount(sellerList[i].SELLER_ID);
+        let totalProducts = await DB_admin.getTotalProducts(sellerList[i].SELLER_ID);
+        sellerList[i].COMPLAIN_COUNT = cnt[0].COUNT;
+        sellerList[i].totalProducts = totalProducts[0].COUNT;
+        let avg = await DB_admin.getSellerRating(sellerList[i].SELLER_ID)
+        sellerList[i].RATING = avg[0].AVG + 0;
+
+        let totalSold = await DB_admin.getTotalSoldProducts(sellerList[i].SELLER_ID);
+
+
+
+        if (totalSold.length > 0)
+            sellerList[i].TOTAL_SOLD = totalSold[0].SALE;
+        else
+            sellerList[i].TOTAL_SOLD = 0;
+
+
+    }
+
+    sellerList.sort((a, b) => (a.RATING < b.RATING) ? 1 : ((b.RATING < a.RATING) ? -1 : 0))
+
+    //console.log(sellerList)
+
+    res.render('admin_seller_view.ejs', {
+        user: user,
+        sellerList: sellerList
+    });
+
+    //res.render("admin_seller_search.ejs", { value: products, tag: tag, user: user });
+
+});
+
+router.post("/admin_profile", async (req, res) => {
+
+    let user = JSON.parse(req.body.user_info);
+
+    let results = await DB_Buyer.getUserDetails(user.person_id);
+
+    res.render('admin_profile.ejs', {
+        user: user,
+        value: results[0],
+    });
+
+});
+
+router.post("/admin_products_buyer", async (req, res) => {
 
 
     let user = JSON.parse(req.body.user_info);
     let seller = req.body.seller;
-  
+
     let products = await DB_Seller.getAllProducts(req.body.category, seller);
     console.log(products)
     console.log(req.body.category);
     console.log(user.user_name);
-  
+
     res.render("admin_products_buyer.ejs", { value: products, user: user, seller: seller });
-  });
+});
 
 router.post('/admin_complain', async (req, res) => {
 
@@ -596,7 +670,28 @@ router.post('/ban', async (req, res) => {
         res.render("admin_products.ejs", { value: products, user: user });
     }
 
-})
+});
+
+router.post('/ban_seller', async (req, res) => {
+
+
+    let seller_id = req.body.seller_id;
+
+
+
+
+    await DB_admin.ban_seller(req.body.seller_id);
+
+
+
+    let products = await DB_Seller.getAllCategories(seller_id);
+
+    let user = JSON.parse(req.body.user_info);
+
+    res.render("admin_products.ejs", { value: products, user: user });
+
+
+});
 
 
 
