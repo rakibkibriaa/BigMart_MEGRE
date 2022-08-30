@@ -74,6 +74,21 @@ async function getProductDetails(p_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getSeller(p_id) {
+    const sql = `
+        SELECT *
+        FROM STORAGE S JOIN SELLER SL
+        ON S.SELLER_ID = SL.SELLER_ID
+        JOIN PERSON P
+        ON SL.SELLER_ID = P.PERSON_ID
+        WHERE S.PRODUCT_ID = :p_id
+        `;
+    const binds = {
+        p_id: p_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function isInCart(person_id, product_id) {
     const sql = `
         SELECT COUNT(*) as COUNT
@@ -572,5 +587,6 @@ module.exports = {
     addToWishList,
     myWishList,
     myWishListAdded,
-    addComplain
+    addComplain,
+    getSeller
 }

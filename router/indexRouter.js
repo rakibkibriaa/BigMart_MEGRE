@@ -53,10 +53,13 @@ router.post("/item", async (req, res) => {
 
   let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
 
+  let seller = await DB_Buyer.getSeller(req.body.product_id);
+  console.log(seller);
+
   console.log(totalReview[0])
   res.render("item.ejs", {
     value: result1[0], user: user, reviews: reviews,
-    canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0]
+    canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0], seller: seller[0]
   });
 
 });
@@ -204,6 +207,33 @@ router.post("/clicked_cart", async (req, res) => {
 
 });
 
+router.post("/seller_category_buyer", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+  let seller = req.body.seller_name;
+  let categories = await DB_Seller.getAllCategories(seller);
+
+  res.render("seller_category_buyer.ejs", {
+    value: categories,
+    user: user,
+    seller:seller
+  });
+
+});
+
+router.post("/seller_products_buyer", async (req, res) => {
+
+
+  let user = JSON.parse(req.body.user_info);
+  let seller = req.body.seller;
+
+  let products = await DB_Seller.getAllProducts(req.body.category, seller);
+  console.log(products)
+  console.log(req.body.category);
+  console.log(user.user_name);
+
+  res.render("seller_products_buyer.ejs", { value: products, user: user , seller: seller});
+});
 router.post("/search", async (req, res) => {
   let user = JSON.parse(req.body.user_info);
 

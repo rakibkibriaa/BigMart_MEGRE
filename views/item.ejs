@@ -141,6 +141,16 @@
                                 </form>
                             </div>
                             <div>
+                                <form action="/seller_category_buyer" method="POST">
+                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+
+                                    <input type="hidden" name="tag" value=<%= value.CATEGORY %> />
+                                    <input type="hidden" name="seller_name" value=<%= seller.NAME %> />
+                                    
+                                    <button class="d-inline btn btn-outline-primary ml-3" name='butt' value='3' type="submit"><%= seller.NAME %></button>
+                                </form>
+                            </div>
+                            <div>
                                 <form action="/item/cart" method="POST">
 
                                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
