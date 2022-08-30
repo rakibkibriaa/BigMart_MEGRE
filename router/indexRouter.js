@@ -82,15 +82,17 @@ router.post("/item/cart", async (req, res) => {
 
   let prod_left = await DB_Buyer.getRemaining(product_id);
 
+  let inCart = await DB_Buyer.inCartTotal(product_id, user.person_id);
 
+  console.log(inCart)
 
   if (buttonPressed == 1) {
-    if (isInCart[0].COUNT === 0 && (prod_left[0].QUANTITY - quantity) > 0) {
+    if (isInCart[0].COUNT === 0 && (prod_left[0].QUANTITY - quantity) >= 0) {
 
       await DB_Buyer.addToCart(user.person_id, product_id, quantity, null);
 
     }
-    else if (isInCart[0].COUNT > 0 && (prod_left[0].QUANTITY - quantity) > 0) {
+    else if (isInCart[0].COUNT > 0 && (prod_left[0].QUANTITY - inCart[0].QUANTITY - quantity) >= 0) {
 
       await DB_Buyer.updateCart(user.person_id, product_id, quantity, null);
     }
@@ -208,6 +210,7 @@ router.post("/clicked_cart", async (req, res) => {
 
 
     let date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear(); //+ ' at ' + time;
+
 
     await DB_Buyer.addToOrder(uuid, user.person_id, date, 'Pending');
 

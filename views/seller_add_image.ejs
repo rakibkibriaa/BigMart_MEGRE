@@ -1,0 +1,164 @@
+<html>
+
+<head>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+   <link rel="stylesheet" href="/css/home.css">
+
+    <title>
+        BigMart
+    </title>
+
+<body>
+    
+    
+        <nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg" >
+            <div class="container-fluid" id = 'nav'>
+                <a class="navbar-brand">
+                    
+                    <form action="/seller_logged_in" method="POST">
+                        
+                        <input type="hidden" name="category" value="" />
+                        <input type="hidden" name="user_info" value=<%=JSON.stringify(user) %> />
+                        <button class="btn btn-info bg-dark" type="submit">
+                            <h1>BigMart</h1>
+                        </button>
+                    </form>
+                    
+                </a>
+
+                <form class="d-flex" action="/seller_search" method="POST">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+                
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- <li class="nav-item pr-4">
+                        <a class="nav-link active" aria-current="page" href="#">
+                            
+                            <button>
+                                Subscribe
+                            </button>
+                        </a>
+                    </li> -->
+                    <li class="nav-item pr-4">
+                        <!-- seller Wishlist -->
+                        
+                        <form action="/seller_complainlist" method="POST"> 
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Complain
+                                </button>
+                            </a>
+                        </form>
+        
+                    </li>
+                    <li class="nav-item pr-4">
+    
+                        <form action="/seller_wishlist" method="POST">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Wishlist
+                                </button>
+                            </a>
+                        </form>
+        
+                    </li>
+                    <li class="nav-item pr-4">
+                       
+                            <form action="/add_product" method="POST">
+                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                <a class="nav-link active" href="#">
+                                    <button type="submit">
+                                        Add
+                                    </button>
+                                </a>
+                            </form>
+                       
+                    </li>
+                    <li class="nav-item pr-4">
+                       
+                        <form action="/seller_list_order" method="POST">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Orders
+                                </button>
+                            </a>
+                        </form>
+                   
+                    </li>
+                   
+                    <li class="nav-item pr-4">
+                        <form action="/profile" method="POST">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Profile
+                                </button>
+                            </a>
+                        </form>
+                    
+                    </li>
+                    <li class="nav-item">
+                        <form action="/logout" method="POST">
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Log out
+                                </button>
+                            </a>
+                        </form>
+                    </li>
+                </ul>
+                
+            </div>
+          
+        </nav>
+
+
+
+
+        <form action="/save_image" method="POST">
+            <label for="img">Select image:</label>
+             <input type="hidden" name='product_id' value=<%= product_id %> />
+             <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+            <input type="file" id="img" name="img" accept="image/*">
+            <div>
+                 <input type="submit" id="submit" value="Add">
+            </div>
+        </form>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous">
+    </script>
+
+    <script >
+        
+        //const express = require('express');
+            //const marked = require('marked');
+
+        //const router = express.Router({ mergeParams: true });
+
+
+        let results = document.querySelectorAll(".button");
+       
+        for(var i=0;i<results.length;i++)
+        {
+            results[i].addEventListener("click",()=>{
+                console.log('clicked')
+            })
+        }
+
+       
+    </script>
+</body>
+
+
+</head>
+
+</html>

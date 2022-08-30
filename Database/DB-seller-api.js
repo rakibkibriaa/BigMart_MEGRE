@@ -490,7 +490,19 @@ async function updatePicture(category, img, p_id) {
     (await database.execute(sql, binds, database.options));
     return;
 }
+async function addImage(product_id, img) {
+    const sql = `
+    INSERT INTO IMAGE VALUES (:product_id, :img)
+   `;
+    const binds = {
+        product_id: product_id,
+        img: img,
+    };
+    (await database.execute(sql, binds, database.options));
+    return;
+}
 module.exports = {
+    addImage,
     getAllCategories,
     getAllProducts,
     getProductDetails,

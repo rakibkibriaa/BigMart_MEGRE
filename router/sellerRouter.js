@@ -129,7 +129,7 @@ router.post("/update_wishlist_status", async (req, res) => {
   console.log(status);
   console.log(product_id);
 
-  if(!status.localeCompare("Approved")){
+  if (!status.localeCompare("Approved")) {
     await DB_Seller.changeWishlistStatus(product_id, status)
   }
 
@@ -173,9 +173,9 @@ router.post("/update_wishlist_status", async (req, res) => {
 
   let quantity = req.body.QUANTITY;
 
-  
 
-  await DB_Seller.addToStock(product_id,quantity);
+
+  await DB_Seller.addToStock(product_id, quantity);
 
   console.log(resu)
   let delivered = await DB_Seller.getAcceptedOrder(user.person_id)
@@ -184,7 +184,7 @@ router.post("/update_wishlist_status", async (req, res) => {
     user: user,
     order_brief: resu,
     delivered: delivered,
-   
+
   });
 });
 
@@ -240,6 +240,31 @@ router.post("/add_product", async (req, res) => {
   res.render("add_product.ejs", {
     user: user
   });
+});
+router.post("/save_image", async (req, res) => {
+  let user = JSON.parse(req.body.user_info);
+
+  let img = req.body.img;
+
+  let product_id = req.body.product_id;
+
+  if (img != '') {
+    await DB_Seller.addImage(product_id, img);
+
+    return res.render("seller_add_image.ejs", {
+      user: user,
+      product_id: product_id
+    });
+  }
+  else {
+    let message = "No image selected"
+    return res.render("alert.ejs", {
+      message: message
+    });
+  }
+
+
+
 });
 
 router.post("/added_seller_logged_in", async (req, res) => {
@@ -357,6 +382,17 @@ router.post("/seller_list_order", async (req, res) => {
   });
 });
 
+router.post("/add_image", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+
+  res.render('seller_add_image.ejs', {
+    user: user,
+    product_id: req.body.product_id
+  });
+
+});
 
 
 // router.post("/update_order_status", async (req, res) => {

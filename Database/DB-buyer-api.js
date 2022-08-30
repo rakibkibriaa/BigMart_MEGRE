@@ -62,6 +62,21 @@ async function getAllProductsByTag(tag) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function inCartTotal(product_id, person_id) {
+    const sql = `
+        SELECT C.QUANTITY AS QUANTITY
+        FROM CART C
+        WHERE PRODUCT_ID = :product_id
+        AND PERSON_ID = :person_id
+        AND C.CART_ID IS NULL
+        `;
+    const binds = {
+        product_id: product_id,
+        person_id: person_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function addComplain(person_id, product_id, msg) {
     const sql = `
         INSERT INTO COMPLAIN VALUES (:person_id,:product_id,:msg)
@@ -446,7 +461,7 @@ async function updateWishlist(product_id, quantity) {
    `;
     const binds = {
         product_id: product_id,
-        quantity:quantity
+        quantity: quantity
     };
     return (await database.execute(sql, binds, database.options)).rows;
 }
@@ -658,7 +673,7 @@ module.exports = {
     myWishListAdded,
     addComplain,
     getSeller,
-
+    inCartTotal,
     getRemaining,
     updateCart,
     editCart,

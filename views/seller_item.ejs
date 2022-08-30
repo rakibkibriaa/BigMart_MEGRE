@@ -199,7 +199,18 @@
                                     <button class="btn btn-outline-primary  mt-5" name='butt' value='1' type="submit" >Edit</button>
                                     <button class="btn btn-outline-primary mt-5 ml-5" name="butt" value='2' type="submit">Add to Stock</button>
                                 </form>
+                                <div>
+                                    <form action="/add_image" method="POST">
+                                        <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+
+                                  
+                                        <input type="hidden" name='product_id' value=<%=value.PRODUCT_ID %> />
+                                        <button class="btn btn-outline-primary mt-5 ml-5" name="butt" value='2' type="submit">Add Image</button>
+                                  </form>
+                                </div>
                             </div>
+
+                         
                         </div>
                     </div>
                 </div>

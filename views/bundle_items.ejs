@@ -13,7 +13,7 @@
 <body>
 
 
-<nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg" >
+        <nav class="navbar sticky-top navbar-light bg-light navbar-expand-lg" >
             <div class="container-fluid" id = 'nav'>
                 <a class="navbar-brand">
                     
@@ -28,7 +28,7 @@
                     
                 </a>
 
-                <form class="d-flex" action="/search" method="POST">
+                <form class="d-flex" action="/admin_search" method="POST">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="tag">
                     <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                     <button class="btn btn-outline-success" type="submit">Search</button>
