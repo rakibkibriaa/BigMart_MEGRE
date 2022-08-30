@@ -121,7 +121,7 @@
         <!-- form starts here -->
 
         <div class="loginbox">
-            <h1>Add Item</h1>
+            <h1>Edit Item</h1>
     
             <form action="/added_seller_edit" method = "post">
                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
@@ -129,26 +129,32 @@
 
                 <input type="hidden" name="from" value="signup">
                 <p>Product Name</p>
-                <input type="text" name="name" id="name" placeholder="Enter Product name">
+                <input type="text" name="name" id="name" placeholder="Enter Product name" value = <%= product.NAME %> >
                 <br>
                 <p>Price</p>
-                <input type="number" name="price" id = "price" placeholder="Enter price">
+                <input type="number" name="price" id = "price" placeholder="Enter price" value = <%= product.PRICE %>>
                 <br>
                 <p>Category</p>
-                <input type="text" name="category" id = "category" placeholder="Enter category">
+                <input type="text" name="category" id = "category" placeholder="Enter category" value = <%= product.CATEGORY %>>
                 <br>
                 <p>Quantity</p>
-                <input type="number" name="quantity" id = "quantity" placeholder="Enter quantity">
+                <input type="number" name="quantity" id = "quantity" placeholder="Enter quantity" value = <%= product.QUANTITY %>>
                 <br>
                 
     
                 <!-- <a href="/">Sign In</a> -->
     
             
-                
+                <br>
                 <label for="img">Select image:</label>
-                <input type="file" id="img" name="img" accept="image/*">
-                <input type="submit" id="submit" value="Add">
+                <br>
+                <input type="file" id="img" name="img" accept="image/*" >
+                <br>
+                <br>
+                <input type="text" name="description" id = "description" placeholder="Enter Description" value = <%= product.DESCRIPTION %>>
+                <br>
+                <br>
+                <input type="submit" id="submit" value="Edit">
            
     
         </div>
