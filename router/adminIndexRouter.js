@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const DB_auth = require("../Database/DB-auth-api");
 const DB_Buyer = require("../Database/DB-buyer-api");
+const DB_Seller = require("../Database/DB-seller-api");
 const DB_admin = require("../Database/DB-admin-api");
 const crypto = require("crypto");
 const { count } = require("console");
@@ -513,15 +514,43 @@ router.post('/admin_item', async (req, res) => {
 
     let totalComplain = await DB_admin.totalComplain(req.body.product_id);
 
-
+    let seller = await DB_Buyer.getSeller(req.body.product_id);
     console.log(totalComplain[0].COUNT)
 
     res.render("admin_item.ejs", {
         value: result1[0], user: user, reviews: reviews,
         avgRating: avgRating[0], totalReview: totalReview[0],
-        complain: complain, totalComplain: totalComplain[0].COUNT
+        complain: complain, totalComplain: totalComplain[0].COUNT, seller:seller[0]
     });
 })
+
+router.post("/admin_category_buyer", async (req, res) => {
+
+    let user = JSON.parse(req.body.user_info);
+    let seller = req.body.seller_name;
+    let categories = await DB_Seller.getAllCategories(seller);
+  
+    res.render("admin_category_buyer.ejs", {
+      value: categories,
+      user: user,
+      seller: seller
+    });
+  
+  });
+
+  router.post("/admin_products_buyer", async (req, res) => {
+
+
+    let user = JSON.parse(req.body.user_info);
+    let seller = req.body.seller;
+  
+    let products = await DB_Seller.getAllProducts(req.body.category, seller);
+    console.log(products)
+    console.log(req.body.category);
+    console.log(user.user_name);
+  
+    res.render("admin_products_buyer.ejs", { value: products, user: user, seller: seller });
+  });
 
 router.post('/admin_complain', async (req, res) => {
 

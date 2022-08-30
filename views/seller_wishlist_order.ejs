@@ -150,6 +150,8 @@
                                              
                                         
                                         <form action="/update_wishlist_status" method="POST">
+                                            <input type="hidden" name="QUANTITY" value=<%=order_brief[i].QUANTITY %> >
+                                            <input type="hidden" name="PRODUCT_NAME" value=<%=order_brief[i].NAME %> >
                                             <p class="font-weight-bold">Status now: <%= order_brief[i].STATUS %> </p>
                                             <p class="font-weight-bold">Change Status</P>
                                             <select name="status" id = "status">

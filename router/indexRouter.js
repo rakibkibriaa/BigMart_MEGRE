@@ -101,7 +101,19 @@ router.post("/item/cart", async (req, res) => {
     let quantity = req.body.quantity;
     let product_id = result.PRODUCT_ID;
 
-    await DB_Buyer.addToWishList(user.person_id, product_id, quantity, 'Pending')
+
+    let isInWishlist =  await DB_Buyer.isInWishlist(user.product_id);
+    console.log("consoling isinwishlist");
+    console.log(isInWishlist);
+    if(isInWishlist.length >0){
+      console.log("it enters is in wishlist");
+      await DB_Buyer.updateWishlist(user.product_id,quantity);
+    }
+    else{
+      await DB_Buyer.addToWishList(user.person_id, product_id, quantity, 'Pending');
+    }
+    
+
 
   }
   else if (buttonPressed == 3) {
