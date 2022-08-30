@@ -433,13 +433,13 @@ router.post("/logged_in", async (req, res) => {
 
 
     let duplicate_username = await DB_auth.dupUsername(user.username);
-    if(duplicate_username.length >0){
+    if (duplicate_username.length > 0) {
       let message = "Username already taken";
       return res.render("alert.ejs", {
-        message:message
+        message: message
       });
     }
-    
+
     let user_temp = {
       person_id: uuid,
       user_name: req.body.username
@@ -482,14 +482,14 @@ router.post("/logged_in", async (req, res) => {
 
     let pass_db;
     let user;
-    if(results.length > 0){
+    if (results.length > 0) {
       pass_db = results[0].PASSWORD;
       user = {
         user_name: req.body.username,
         person_id: results[0].PERSON_ID
       }
     }
-    else{
+    else {
       pass_db = null;
     }
 
@@ -549,7 +549,7 @@ router.post("/logged_in", async (req, res) => {
       //return res.redirect("/");
       let message = "Wrong password or username";
       res.render("alert.ejs", {
-        message:message
+        message: message
       });
     }
   }
