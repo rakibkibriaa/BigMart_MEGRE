@@ -102,9 +102,9 @@ async function getAllProducts(category, id) {
 async function addProduct(product, user) {
     const sql = `
         INSERT INTO
-            PRODUCT(PRODUCT_ID, NAME, PRICE, CATEGORY, QUANTITY, TOTAL_SALES)
+            PRODUCT(PRODUCT_ID, NAME, PRICE, CATEGORY, QUANTITY, TOTAL_SALES,DESCRIPTION)
         VALUES
-            (:product_id, :name, :price, :category, :quantity, :total_sales)
+            (:product_id, :name, :price, :category, :quantity, :total_sales , :description)
     `;
     const binds = {
         product_id: product.product_id,
@@ -113,7 +113,7 @@ async function addProduct(product, user) {
         category: product.category,
         quantity: product.quantity,
         total_sales: product.total_sales,
-
+        description: product.description
     }
     const storage_sql = `
         INSERT INTO
@@ -131,13 +131,14 @@ async function addProduct(product, user) {
 }
 
 
-async function editProduct(name, price, quantity, product_id) {
+async function editProduct(name, price, quantity, product_id,description) {
     const sql = `
         
         UPDATE PRODUCT SET 
         NAME = :name,
         PRICE = :price,
-        QUANTITY = :quantity
+        QUANTITY = :quantity,
+        DESCRIPTION = :description
 
         WHERE PRODUCT_ID = :product_id
     `;
@@ -146,6 +147,7 @@ async function editProduct(name, price, quantity, product_id) {
         name: name,
         price: price,
         quantity: quantity,
+        description:description
     }
 
 

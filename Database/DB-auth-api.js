@@ -19,6 +19,22 @@ async function getUserIDByEmail(email) {
     return (await database.execute(sql, binds, database.options)).rows;
 }
 
+async function dupUsername(username) {
+    const sql = `
+        SELECT 
+            *
+        FROM 
+            Person
+        WHERE 
+            USERNAME = :username
+        `;
+    const binds = {
+        username: username
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
 async function getUserIDByUserName(username) {
     const sql = `
         SELECT 
@@ -271,5 +287,6 @@ module.exports = {
     addSeller,
     deleteSeller,
     deleteApproval,
-    getIDByUsername
+    getIDByUsername,
+    dupUsername
 }

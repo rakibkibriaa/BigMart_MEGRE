@@ -164,10 +164,9 @@
                     <div class="col-md-8">
                         <div class="card-body">
                             <h5 class="card-title font-weight-bold">Name: <%= value.NAME %></h5>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
+                            <p class="card-text"><%= value.DESCRIPTION%>
                             </p>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                            </p>
+                            
                             <p class="card-text font-weight-bold ">In stock: <%= value.QUANTITY%></p>
                             <p class="card-text font-weight-bold ">Price : <%= value.PRICE %>
                             </p>
@@ -192,7 +191,7 @@
                                     <div class="mb-4">
                                     
                                         <p class="d-inline  card-text font-weight-bold"> Quantity:</p>
-                                        <input class="d-inline ml-2 col-lg-2 form-control" name="quantity">
+                                        <input class="d-inline ml-2 col-lg-2 form-control" min="1" name="quantity" required>
                                     
                                     </div>
                                     

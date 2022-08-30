@@ -69,11 +69,15 @@ router.post("/seller_item/stock", async (req, res) => {
 
 
     let product_id = req.body.product_id;
+    let product = await DB_Seller.getProductDetails(product_id);
+
+    console.log(product);
 
     res.render("seller_product_edit.ejs", {
 
       user: user,
-      product_id: product_id
+      product_id: product_id,
+      product:product[0]
     });
 
   }
@@ -280,6 +284,7 @@ router.post("/added_seller_logged_in", async (req, res) => {
     price: req.body.price,
     category: req.body.category,
     quantity: req.body.quantity,
+    description: req.body.description,
     total_sales: 0,
   };
 
@@ -335,7 +340,7 @@ router.post("/added_seller_edit", async (req, res) => {
   }
   //await DB_Seller.addProduct(product,user_temp);
   console.log(req.body.name);
-  await DB_Seller.editProduct(req.body.name, req.body.price, req.body.quantity, req.body.product_id);
+  await DB_Seller.editProduct(req.body.name, req.body.price, req.body.quantity, req.body.product_id,req.body.description);
   console.log("reaches after edit product");
   let product = await DB_Seller.getProductDetails(req.body.product_id);
   let categories = await DB_Seller.getAllCategories(user.person_id);
