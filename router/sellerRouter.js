@@ -17,7 +17,7 @@ router.post("/seller_products", async (req, res) => {
 
   let user = JSON.parse(req.body.user_info);
 
-  let products = await DB_Seller.getAllProducts(req.body.category, user.user_name);
+  let products = await DB_Seller.getAllProducts(req.body.category, user.person_id);
   console.log(products)
   console.log(req.body.category);
   console.log(user.user_name);
@@ -129,7 +129,9 @@ router.post("/update_wishlist_status", async (req, res) => {
   console.log(status);
   console.log(product_id);
 
-  await DB_Seller.changeWishlistStatus(product_id, status)
+  if(!status.localeCompare("Approved")){
+    await DB_Seller.changeWishlistStatus(product_id, status)
+  }
 
 
 
@@ -206,7 +208,7 @@ router.post("/seller_search", async (req, res) => {
 
   let tag = req.body.tag;
 
-  let products = await DB_Seller.getAllProductsByTag(tag.toUpperCase(), user.user_name);
+  let products = await DB_Seller.getAllProductsByTag(tag.toUpperCase(), user.person_id);
 
 
 
@@ -220,7 +222,9 @@ router.post("/seller_search", async (req, res) => {
 router.post("/seller_logged_in", async (req, res) => {
 
   let user = JSON.parse(req.body.user_info);
-  let categories = await DB_Seller.getAllCategories(user.user_name);
+  let categories = await DB_Seller.getAllCategories(user.person_id);
+
+  console.log(user);
 
   res.render("seller_logged_in.ejs", {
     value: categories,
@@ -261,7 +265,7 @@ router.post("/added_seller_logged_in", async (req, res) => {
   }
   await DB_Seller.addProduct(product, user_temp);
 
-  let categories = await DB_Seller.getAllCategories(user.user_name);
+  let categories = await DB_Seller.getAllCategories(user.person_id);
 
   //let user = JSON.parse(req.body.user_info);
 
@@ -309,7 +313,7 @@ router.post("/added_seller_edit", async (req, res) => {
   await DB_Seller.editProduct(req.body.name, req.body.price, req.body.quantity, req.body.product_id);
   console.log("reaches after edit product");
   let product = await DB_Seller.getProductDetails(req.body.product_id);
-  let categories = await DB_Seller.getAllCategories(user.user_name);
+  let categories = await DB_Seller.getAllCategories(user.person_id);
 
   //let user = JSON.parse(req.body.user_info);
 

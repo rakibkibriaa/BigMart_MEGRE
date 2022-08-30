@@ -446,6 +446,7 @@ async function updateWishlist(product_id, quantity) {
    `;
     const binds = {
         product_id: product_id,
+        quantity:quantity
     };
     return (await database.execute(sql, binds, database.options)).rows;
 }

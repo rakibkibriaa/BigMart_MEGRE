@@ -45,7 +45,26 @@ async function getOrderList() {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function getAllCategories(name) {
+// async function getAllCategories(name) {
+
+//     const sql = `
+//         SELECT DISTINCT P.Category
+//         FROM STORAGE S
+//         JOIN PRODUCT P
+//         ON S.PRODUCT_ID = P.PRODUCT_ID
+//         JOIN PERSON PS
+//         ON S.SELLER_ID = PS.PERSON_ID
+//         WHERE 
+//          PS.NAME = :name
+//         `;
+//     const binds = {
+//         name: name
+//     }
+
+//     return (await database.execute(sql, binds, database.options)).rows;
+// }
+
+async function getAllCategories(seller_id) {
 
     const sql = `
         SELECT DISTINCT P.Category
@@ -54,16 +73,33 @@ async function getAllCategories(name) {
         ON S.PRODUCT_ID = P.PRODUCT_ID
         JOIN PERSON PS
         ON S.SELLER_ID = PS.PERSON_ID
-        WHERE 
-         PS.NAME = :name
+        WHERE S.SELLER_ID = :seller_id
         `;
     const binds = {
-        name: name
+        seller_id: seller_id
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
-async function getAllProducts(category, name) {
+// async function getAllProducts(category, name) {
+//     const sql = `
+//         SELECT *
+//         FROM (STORAGE S JOIN PRODUCT P 
+//         ON(S.PRODUCT_ID = P.PRODUCT_ID))
+//         JOIN PERSON PS
+//         ON(S.SELLER_ID = PS.PERSON_ID)
+//         WHERE P.CATEGORY = :category
+//         AND PS.NAME = :name
+        
+//         `;
+//     const binds = {
+//         category: category,
+//         name: name
+//     }
+
+//     return (await database.execute(sql, binds, database.options)).rows;
+// }
+async function getAllProducts(category, id) {
     const sql = `
         SELECT *
         FROM (STORAGE S JOIN PRODUCT P 
@@ -71,12 +107,12 @@ async function getAllProducts(category, name) {
         JOIN PERSON PS
         ON(S.SELLER_ID = PS.PERSON_ID)
         WHERE P.CATEGORY = :category
-        AND PS.NAME = :name
+        AND S.SELLER_ID = :id
         
         `;
     const binds = {
         category: category,
-        name: name
+        id:id
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
@@ -134,7 +170,7 @@ async function editProduct(name, price, quantity, product_id) {
     return await database.execute(sql, binds, {});
 }
 
-async function getAllProductsByTag(tag, name) {
+async function getAllProductsByTag(tag, id) {
     const sql = `
         SELECT *
         FROM (STORAGE S JOIN PRODUCT P
@@ -145,11 +181,11 @@ async function getAllProductsByTag(tag, name) {
          OR
          ( UPPER(P.category) LIKE '%'||:tag||'%')))
          AND 
-         (PS.NAME = :name)
+         (S.SELLER_ID = :id)
         `;
     const binds = {
         tag: tag,
-        name: name
+        id:id
     }
 
     return (await database.execute(sql, binds, database.options)).rows;
