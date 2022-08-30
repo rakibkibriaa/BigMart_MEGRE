@@ -13,7 +13,32 @@ async function getOrderList() {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function banItem(product_id) {
+    const sql = `
+        DELETE FROM PRODUCT WHERE PRODUCT_ID = :product_id
+        `;
+    const binds = {
+        product_id: product_id
+    }
 
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function banSeller(product_id) {
+    const sql = `
+        DELETE FROM SELLER WHERE SELLER_ID = 
+        (
+            SELECT SELLER_ID
+            FROM PRODUCT P JOIN STORAGE S
+            ON (P.PRODUCT_ID = S.PRODUCT_ID)
+            AND P.PRODUCT_ID = :product_id
+        )
+        `;
+    const binds = {
+        product_id: product_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function getBundleCount(s_id) {
     const sql = `
         SELECT COUNT(DISTINCT(bundle_id)) as COUNT
@@ -372,7 +397,9 @@ module.exports = {
     getOrderList,
     changeOrderStatus,
     getSellerList,
-    getSellerById
+    getSellerById,
+    banItem,
+    banSeller
 }
 
 
