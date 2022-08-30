@@ -37,6 +37,18 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item pr-4">
                        
+                            <form action="/admin_complain" method="POST">
+                                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                <a class="nav-link active" href="#">
+                                    <button type="submit">
+                                        Complain
+                                    </button>
+                                </a>
+                            </form>
+                       
+                    </li>
+                    <li class="nav-item pr-4">
+                       
                             <form action="/admin_subscription" method="POST">
                                 <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
                                 <a class="nav-link active" href="#">
@@ -46,6 +58,19 @@
                                 </a>
                             </form>
                        
+                    </li>
+
+                    <li class="nav-item pr-4">
+                       
+                        <form action="/approval_order" method="POST">
+                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                            <a class="nav-link active" href="#">
+                                <button type="submit">
+                                    Approval List
+                                </button>
+                            </a>
+                        </form>
+                   
                     </li>
                     <li class="nav-item pr-4">
                        
@@ -85,7 +110,7 @@
                 
             </div>
           
-</nav>
+        </nav>
 
 
 

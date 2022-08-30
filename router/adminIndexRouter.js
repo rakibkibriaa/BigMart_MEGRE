@@ -32,10 +32,10 @@ router.post("/update_approval_status", async (req, res) => {
     //await DB_admin.changeOrderStatus(order_id, status)
     await DB_auth.deleteApproval(SELLER_ID);
 
-    if(!status.localeCompare('Accept')){
+    if (!status.localeCompare('Accept')) {
         await DB_auth.addSeller(SELLER_ID);
     }
-    else{
+    else {
         await DB_auth.deleteSeller(SELLER_ID);
     }
 
@@ -81,7 +81,7 @@ router.post("/update_approval_status", async (req, res) => {
 
 });
 
-router.post("/list_order", async (req, res) => {
+/*router.post("/list_order", async (req, res) => {
 
     let user = JSON.parse(req.body.user_info);
 
@@ -114,7 +114,7 @@ router.post("/list_order", async (req, res) => {
         user: user,
         order_brief: order_brief
     });
-});
+}); */
 
 router.post('/admin_subscription', async (req, res) => {
 
@@ -514,6 +514,7 @@ router.post('/admin_item', async (req, res) => {
 
 
     console.log(totalComplain[0].COUNT)
+
     res.render("admin_item.ejs", {
         value: result1[0], user: user, reviews: reviews,
         avgRating: avgRating[0], totalReview: totalReview[0],
@@ -534,41 +535,37 @@ router.post('/admin_complain', async (req, res) => {
 })
 router.post('/ban', async (req, res) => {
 
-    let products = await DB_Buyer.getAllProducts(req.body.tag);
+    let buttonPressed = req.body.butt;
 
 
 
-    let user = JSON.parse(req.body.user_info);
+    if (buttonPressed == 1) {
 
-    res.render("admin_products.ejs", { value: products, user: user });
+        await DB_admin.banItem(req.body.product_id);
 
-
-    await DB_admin.banItem(req.body.product_id);
-
-    /*let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
-
-    let user = JSON.parse(req.body.user_info);
-
-    let reviews = await DB_Buyer.getReviews(req.body.product_id);
-
-    console.log(user);
+        let products = await DB_Buyer.getAllProducts(req.body.tag);
 
 
-    let avgRating = await DB_Buyer.avgRating(req.body.product_id);
 
-    let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
+        let user = JSON.parse(req.body.user_info);
 
-    let complain = await DB_admin.getComplain(req.body.product_id);
+        res.render("admin_products.ejs", { value: products, user: user });
 
-    let totalComplain = await DB_admin.totalComplain(req.body.product_id);
+    }
+    else {
 
 
-    console.log(totalComplain[0].COUNT)
-    res.render("admin_item.ejs", {
-        value: result1[0], user: user, reviews: reviews,
-        avgRating: avgRating[0], totalReview: totalReview[0],
-        complain: complain, totalComplain: totalComplain[0].COUNT
-    });*/
+        await DB_admin.banSeller(req.body.product_id);
+
+        let products = await DB_Buyer.getAllProducts(req.body.tag);
+
+
+
+        let user = JSON.parse(req.body.user_info);
+
+        res.render("admin_products.ejs", { value: products, user: user });
+    }
+
 })
 
 

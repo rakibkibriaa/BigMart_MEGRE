@@ -425,10 +425,6 @@ router.post("/logged_in", async (req, res) => {
         res.render("seller_waiting_approval.ejs", {
         });
       }
-
-
-
-
     }
     else {
       return res.redirect("/");
