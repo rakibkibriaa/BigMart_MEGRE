@@ -111,12 +111,17 @@ router.post("/item/cart", async (req, res) => {
     let product_id = result.PRODUCT_ID;
 
 
-    let isInWishlist = await DB_Buyer.isInWishlist(user.product_id);
+
+
+    let isInWishlist = await DB_Buyer.isInWishlist(product_id);
+    console.log(product_id);
+
     console.log("consoling isinwishlist");
     console.log(isInWishlist);
     if (isInWishlist.length > 0) {
       console.log("it enters is in wishlist");
-      await DB_Buyer.updateWishlist(user.product_id, quantity);
+      await DB_Buyer.updateWishlist(product_id, quantity);
+
     }
     else {
       await DB_Buyer.addToWishList(user.person_id, product_id, quantity, 'Pending');
@@ -231,7 +236,7 @@ router.post("/clicked_cart", async (req, res) => {
 router.post("/seller_category_buyer", async (req, res) => {
 
   let user = JSON.parse(req.body.user_info);
-  let seller = req.body.seller_name;
+  let seller = req.body.seller_id;
   let categories = await DB_Seller.getAllCategories(seller);
 
   res.render("seller_category_buyer.ejs", {
@@ -432,7 +437,7 @@ router.post("/logged_in", async (req, res) => {
     await DB_auth.createNewUser(user);
 
     if (!user.type.localeCompare('seller')) {
-      let categories = await DB_Seller.getAllCategories(user.user_name);
+      let categories = await DB_Seller.getAllCategories(user.person_id);
 
 
       res.render("seller_waiting_approval.ejs", {
@@ -506,7 +511,7 @@ router.post("/logged_in", async (req, res) => {
       else if (isSeller.length > 0) {
         console.log("it is seller");
 
-        let categories = await DB_Seller.getAllCategories(user.user_name);
+        let categories = await DB_Seller.getAllCategories(user.person_id);
 
         res.render("seller_logged_in.ejs", {
           value: categories,
