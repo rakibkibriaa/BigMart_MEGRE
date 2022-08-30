@@ -36,6 +36,18 @@ async function getAllProducts(category) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getRemaining(product_id) {
+    const sql = `
+        SELECT QUANTITY
+        FROM PRODUCT
+        WHERE PRODUCT_ID = :product_id
+        `;
+    const binds = {
+        product_id: product_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function getAllProductsByTag(tag) {
     const sql = `
         SELECT *
@@ -116,6 +128,38 @@ async function addToCart(person_id, product_id, quantity, cart_id) {
         product_id: product_id,
         quantity: quantity,
         cart_id: cart_id
+
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
+async function updateCart(person_id, product_id, quantity) {
+    const sql = `
+        UPDATE CART SET QUANTITY = QUANTITY + :quantity
+        WHERE PERSON_ID = :person_id AND
+        PRODUCT_ID = :product_id AND
+        CART_ID IS NULL
+        `;
+    const binds = {
+        person_id: person_id,
+        product_id: product_id,
+        quantity: quantity,
+
+    }
+
+    return (await database.execute(sql, binds, database.options));
+}
+async function editCart(person_id, product_id, quantity) {
+    const sql = `
+        UPDATE CART SET QUANTITY = :quantity
+        WHERE PERSON_ID = :person_id AND
+        PRODUCT_ID = :product_id AND
+        CART_ID IS NULL
+        `;
+    const binds = {
+        person_id: person_id,
+        product_id: product_id,
+        quantity: quantity,
 
     }
 
@@ -588,5 +632,8 @@ module.exports = {
     myWishList,
     myWishListAdded,
     addComplain,
-    getSeller
+    getSeller,
+    getRemaining,
+    updateCart,
+    editCart
 }

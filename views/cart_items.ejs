@@ -183,6 +183,13 @@
                         <button class="btn btn-danger" type="submit" name='butt' value='1'>Remove</button>
                     </div>
                 </form>
+                <form action="/edit_cart" method="POST">
+                    <input type="hidden" name="product_id" value = <%=value[i].PRODUCT_ID %> />
+                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                    <div>
+                        <button class="btn btn-success" type="submit" name='butt' value='1'>EDIT</button>
+                    </div>
+                </form>
         </div>
 
         <%} %>

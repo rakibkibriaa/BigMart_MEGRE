@@ -421,6 +421,21 @@ async function getSellerById(SELLER_ID) {
     }
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getTotalSoldProducts(SELLER_ID) {
+    const sql = `
+        SELECT (SUM(P.TOTAL_SALES) / COUNT(*)) AS SALE
+        FROM ORDER_TABLE O JOIN CART C
+        ON (O.ORDER_ID = C.CART_ID) JOIN STORAGE S
+        ON (S.PRODUCT_ID = C.PRODUCT_ID)  JOIN PRODUCT P
+        ON(S.PRODUCT_ID = P.PRODUCT_ID)
+        WHERE S.SELLER_ID = :SELLER_ID
+        GROUP BY (S.SELLER_ID)
+    `;
+    const binds = {
+        SELLER_ID: SELLER_ID
+    }
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 
 module.exports = {
     getOrderList,
@@ -456,7 +471,8 @@ module.exports = {
     getAdminSellerList,
     getComplainCount,
     getTotalProducts,
-    getSellerRating
+    getSellerRating,
+    getTotalSoldProducts
 }
 
 

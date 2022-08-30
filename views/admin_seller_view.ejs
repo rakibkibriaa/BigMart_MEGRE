@@ -135,7 +135,7 @@
                                             
                                             
 
-                                                <h5 class="card-title">NAME: <%=sellerList[i].NAME %></h5>
+                                                <h5 class="card-title">Name: <%=sellerList[i].NAME %></h5>
 
                                                 <p>Email: <%=sellerList[i].EMAIL %></p>
                                                 <p>Total Products: <%= sellerList[i].totalProducts %> </p>
@@ -145,8 +145,8 @@
                                                     <p>Avg Rating: No rating found</p>
                                                     <% } else{ %>  
                                                     <p>Avg Rating: <%= sellerList[i].RATING %> </p>
-                                                    <% } %>
-                                                
+                                                <% } %>
+                                                <p>Total Sold Products: <%= sellerList[i].TOTAL_SOLD %> </p>
 
                                                 
 

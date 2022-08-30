@@ -57,6 +57,7 @@ router.post("/item", async (req, res) => {
   console.log(seller);
 
   console.log(totalReview[0])
+
   res.render("item.ejs", {
     value: result1[0], user: user, reviews: reviews,
     canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0], seller: seller[0]
@@ -79,19 +80,28 @@ router.post("/item/cart", async (req, res) => {
 
   let buttonPressed = req.body.butt;
 
+  let prod_left = await DB_Buyer.getRemaining(product_id);
+
 
 
   if (buttonPressed == 1) {
-    if (isInCart[0].COUNT === 0 && quantity > 0) {
+    if (isInCart[0].COUNT === 0 && (prod_left[0].QUANTITY - quantity) > 0) {
 
       await DB_Buyer.addToCart(user.person_id, product_id, quantity, null);
 
     }
-    else if (quantity == 0) {
-      console.log("give valid quantity");
+    else if (isInCart[0].COUNT > 0 && (prod_left[0].QUANTITY - quantity) > 0) {
+
+      await DB_Buyer.updateCart(user.person_id, product_id, quantity, null);
     }
     else {
-      console.log("Already Added");
+
+      let message = "Please input valid quantity";
+      return res.render("alert.ejs",
+        {
+          message: message
+
+        });
     }
 
   }
@@ -218,6 +228,75 @@ router.post("/seller_category_buyer", async (req, res) => {
     user: user,
     seller: seller
   });
+
+});
+router.post("/edit_cart", async (req, res) => {
+
+  let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
+
+  let user = JSON.parse(req.body.user_info);
+
+  let reviews = await DB_Buyer.getReviews(req.body.product_id);
+
+  console.log(user);
+
+  let canreview = await DB_Buyer.canReview(req.body.product_id, user.person_id);
+
+  let avgRating = await DB_Buyer.avgRating(req.body.product_id);
+
+  let totalReview = await DB_Buyer.totalReview(req.body.product_id, user.person_id);
+
+  let seller = await DB_Buyer.getSeller(req.body.product_id);
+  console.log(seller);
+
+  console.log(totalReview[0])
+
+  res.render("edit_cart.ejs", {
+    value: result1[0], user: user, reviews: reviews,
+    canReview: canreview[0].COUNT, avgRating: avgRating[0], totalReview: totalReview[0], seller: seller[0]
+  });
+
+});
+router.post("/cart_updated", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  let result = JSON.parse(req.body.product);
+
+  let product_id = result.PRODUCT_ID;
+
+  let isInCart = await DB_Buyer.isInCart(user.person_id, product_id);
+
+  let quantity = req.body.quantity;
+
+  let buttonPressed = req.body.butt;
+
+  let prod_left = await DB_Buyer.getRemaining(product_id);
+
+
+
+  if (buttonPressed == 1) {
+
+    await DB_Buyer.editCart(user.person_id, product_id, quantity, null);
+
+  }
+  else if (buttonPressed == 2) {
+    console.log("butt2"); ///wishlist
+
+    let quantity = req.body.quantity;
+    let product_id = result.PRODUCT_ID;
+
+    await DB_Buyer.addToWishList(user.person_id, product_id, quantity, 'Pending')
+
+  }
+  else if (buttonPressed == 3) {
+    let category = req.body.category;
+    let products = await DB_Buyer.getAllProducts(category);
+
+    return res.redirect("/login");
+  }
+
+  return res.sendStatus(204);
 
 });
 
@@ -471,7 +550,7 @@ router.post('/profile', async (req, res) => {
 
   }
 
-
+  order_brief.sort((a, b) => (a.ORDER_DATE > b.ORDER_DATE) ? 1 : ((b.ORDER_DATE > a.ORDER_DATE) ? -1 : 0))
 
   res.render('profile.ejs', {
     user: user,
