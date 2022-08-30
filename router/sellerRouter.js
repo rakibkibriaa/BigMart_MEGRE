@@ -169,13 +169,20 @@ router.post("/update_wishlist_status", async (req, res) => {
 
   let resu = await DB_Seller.getWishlist(user.person_id)
 
+  let quantity = req.body.QUANTITY;
+
+  
+
+  await DB_Seller.addToStock(product_id,quantity);
+
   console.log(resu)
   let delivered = await DB_Seller.getAcceptedOrder(user.person_id)
 
   res.render('seller_wishlist_order.ejs', {
     user: user,
     order_brief: resu,
-    delivered: delivered
+    delivered: delivered,
+   
   });
 });
 

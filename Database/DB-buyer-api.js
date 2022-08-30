@@ -405,7 +405,7 @@ async function myWishList(person_id) {
         FROM WISHLIST W JOIN PRODUCT P
         ON(W.PRODUCT_ID = P.PRODUCT_ID)
         WHERE PERSON_ID = :person_id
-        AND STATUS <> 'Added'
+        AND STATUS <> 'Approved'
    `;
     const binds = {
         person_id: person_id,
@@ -418,10 +418,34 @@ async function myWishListAdded(person_id) {
         FROM WISHLIST W JOIN PRODUCT P
         ON(W.PRODUCT_ID = P.PRODUCT_ID)
         WHERE PERSON_ID = :person_id
-        AND STATUS = 'Added'
+        AND STATUS = 'Approved'
    `;
     const binds = {
         person_id: person_id,
+    };
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function isInWishlist(product_id) {
+    const sql = `
+        SELECT *
+        FROM WISHLIST W JOIN PRODUCT P
+        ON(W.PRODUCT_ID = P.PRODUCT_ID)
+        WHERE W.PRODUCT_ID = :product_id
+        AND STATUS = 'Pending'
+   `;
+    const binds = {
+        product_id: product_id,
+    };
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function updateWishlist(product_id, quantity) {
+    const sql = `
+        UPDATE WISHLIST SET QUANTITY = QUANTITY+  :quantity
+        WHERE PRODUCT_ID = :product_id
+   `;
+    const binds = {
+        product_id: product_id,
     };
     return (await database.execute(sql, binds, database.options)).rows;
 }
@@ -633,7 +657,10 @@ module.exports = {
     myWishListAdded,
     addComplain,
     getSeller,
+
     getRemaining,
     updateCart,
-    editCart
+    editCart,
+    isInWishlist,
+    updateWishlist
 }

@@ -166,6 +166,19 @@ async function getProductDetails(p_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getProductId(p_name) {
+    const sql = `
+        SELECT PRODUCT_ID
+        FROM PRODUCT
+        WHERE NAME = :p_name
+        `;
+    const binds = {
+        p_name:p_name
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
 async function isInCart(person_id, product_id) {
     const sql = `
         SELECT COUNT(*) as COUNT
@@ -485,5 +498,6 @@ module.exports = {
     getAcceptedOrder,
     getWishlist,
     changeWishlistStatus,
-    getComplainlist
+    getComplainlist,
+    getProductId
 }
