@@ -337,7 +337,7 @@ router.post("/seller_list_order", async (req, res) => {
 
   let delivered = await DB_Seller.getDeliveredOrder(user.person_id)
 
-
+  resu.sort((a, b) => (a.ORDER_DATE > b.ORDER_DATE) ? 1 : ((b.ORDER_DATE > a.ORDER_DATE) ? -1 : 0))
 
   res.render('seller_list_order.ejs', {
     user: user,
@@ -435,7 +435,9 @@ router.post("/update_order_status", async (req, res) => {
 
   let resu = await DB_Seller.getOrder(user.person_id)
 
-  console.log(resu)
+
+  resu.sort((a, b) => (a.ORDER_DATE > b.ORDER_DATE) ? 1 : ((b.ORDER_DATE > a.ORDER_DATE) ? -1 : 0))
+
   let delivered = await DB_Seller.getDeliveredOrder(user.person_id)
 
   res.render('seller_list_order.ejs', {

@@ -624,11 +624,11 @@ router.post("/admin_seller_view", async (req, res) => {
         sellerList[i].COMPLAIN_COUNT = cnt[0].COUNT;
         sellerList[i].totalProducts = totalProducts[0].COUNT;
         let avg = await DB_admin.getSellerRating(sellerList[i].SELLER_ID)
-        sellerList[i].RATING = avg[0].AVG + 0;
+        sellerList[i].RATING = avg[0].AVG + 0 + 4;
 
     }
 
-
+    sellerList.sort((a, b) => (a.RATING < b.RATING) ? 1 : ((b.RATING < a.RATING) ? -1 : 0))
 
     res.render('admin_seller_view.ejs', {
         user: user,
