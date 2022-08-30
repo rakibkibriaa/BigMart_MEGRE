@@ -23,6 +23,44 @@ async function banItem(product_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getAdminSellerList() {
+    const sql = `
+        SELECT * 
+        FROM SELLER S JOIN PERSON P 
+        ON(S.SELLER_ID = P.PERSON_ID)
+        `;
+    const binds = {
+
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+
+async function getComplainCount(seller_id) {
+    const sql = `
+        SELECT COUNT(*) AS COUNT
+        FROM STORAGE S JOIN COMPLAIN C 
+        ON(S.PRODUCT_ID = C.PRODUCT_ID)
+        AND S.SELLER_ID = :seller_id
+        `;
+    const binds = {
+        seller_id: seller_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
+async function getTotalProducts(seller_id) {
+    const sql = `
+        SELECT COUNT(*) AS COUNT
+        FROM STORAGE S
+        WHERE SELLER_ID = :seller_id
+        `;
+    const binds = {
+        seller_id: seller_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function banSeller(product_id) {
     const sql = `
         DELETE FROM SELLER WHERE SELLER_ID = 
@@ -306,6 +344,21 @@ async function totalComplain(product_id) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function getSellerRating(seller_id) {
+    const sql = `
+    SELECT AVG(R.RATING) as AVG
+    FROM STORAGE S JOIN PRODUCT P
+    ON(S.PRODUCT_ID = P.PRODUCT_ID) JOIN PRODUCT_REVIEW PR
+    ON(P.PRODUCT_ID = PR.PRODUCT_ID) JOIN REVIEW R
+    ON(R.REVIEW_ID = PR.REVIEW_ID)
+    WHERE S.SELLER_ID = :seller_id
+        `;
+    const binds = {
+        seller_id: seller_id
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 
 async function deleteItemFromBundle(bundle_id, product_id) {
     const sql = `
@@ -399,7 +452,11 @@ module.exports = {
     getSellerList,
     getSellerById,
     banItem,
-    banSeller
+    banSeller,
+    getAdminSellerList,
+    getComplainCount,
+    getTotalProducts,
+    getSellerRating
 }
 
 

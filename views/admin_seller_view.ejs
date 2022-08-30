@@ -110,67 +110,55 @@
             </div>
           
         </nav>
-    <div class="Sections">
-
-        <div class="Categories ml-5">
-
-            <h1 class="display-4">Categories</h1>
-            
-        
-            
-            <div class="row row-cols-md-3 g-4 ml-10 mt-10 " ">
-          
-                    <% for(var i=0; i < value.length;i++) {%>
-                        
-                            <div class="col-3 mb-5" >
-
-                                
-                                <form action="/admin_products" method="POST">
-
-                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-                                
-                                    <div class="card"  name = 'category' style="width: 15rem;" >
-                                        
-                                        
-                                            <div class="d-flex justify-content-center">
-
-                                                <button class = "btn" type="submit">
-                                                
-                                                    <img src="/img/<%= value[i].IMAGE_SRC %>"  class="rounded mx-auto d-block" alt="..." max>
-
-                                                        <div class="card-body">
-                                                            
-                                                            <input type='hidden' name='category' value= <%= value[i].CATEGORY %> />
-                                                                <h5 class="card-title" , name="title" value="haha1"><%= value[i].CATEGORY %></h5>
-                                                                <!--<p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                                                                <p class="card-text"><small class="text-muted">Price: <%= value[i].PRICE %></small></p> -->
-                                                        </div> 
-
-                                                </button>
-
-                                            </div>
-                                        
-                                    </div>
-
-                                </form>
-                                <form action="/edit_category_picture" method="POST">
-                                    <input type='hidden' name='category' value= <%= value[i].CATEGORY %> />
-                                    <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-
-                                    <div>
-                                        
-                                        <button class="btn btn-success mt-3" type="submit" name='butt' value='1'>Edit Picture</button>
-                                    </div>
-                                </form>
-                            </div>
-                        
-                    <%} %>
+    <div class="card-deck">
+                
+                <% for(var i=0; i < sellerList.length;i++) {%>
                     
-            </div>
+                    <div class=" col-4 mb-5">
 
-           
-          
-        </div>
+                            <form action="/item" method="POST">
+                                <div class="card mt-5">
+                                    
+                                    <button class="btn" type="submit">
+
+                                        <div class="card-body mt-10">
+                                        
+                                       
+
+                                            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+                                            <input type="hidden" name="seller_id" value=<%= sellerList[i].SELLER_ID %> >
+
+                                           
+                                            
+                                            
+
+                                                <h5 class="card-title">NAME: <%=sellerList[i].NAME %></h5>
+
+                                                <p>Email: <%=sellerList[i].EMAIL %></p>
+                                                <p>Total Products: <%= sellerList[i].totalProducts %> </p>
+                                                <p>Total Complains: <%= sellerList[i].COMPLAIN_COUNT %> </p>
+
+                                                <% if(sellerList[i].RATING == 0){ %>
+                                                    <p>Avg Rating: No rating found</p>
+                                                    <% } else{ %>  
+                                                    <p>Avg Rating: <%= sellerList[i].RATING %> </p>
+                                                    <% } %>
+                                                
+
+                                                
+
+                                            
+                                            
+                                     
+                                    </div>
+                                    </button>
+
+                                
+                                </div>
+                            </form>
+                       
+                    </div>
+                <%} %>
     </div>
 
    

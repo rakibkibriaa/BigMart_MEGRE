@@ -34,6 +34,7 @@ router.post("/update_approval_status", async (req, res) => {
 
     if (!status.localeCompare('Accept')) {
         await DB_auth.addSeller(SELLER_ID);
+
     }
     else {
         await DB_auth.deleteSeller(SELLER_ID);
@@ -610,7 +611,32 @@ router.post("/approval_order", async (req, res) => {
         seller_brief: seller_brief
     });
 });
+router.post("/admin_seller_view", async (req, res) => {
 
+    let user = JSON.parse(req.body.user_info);
+
+    let sellerList = await DB_admin.getAdminSellerList();
+
+
+    for (let i = 0; i < sellerList.length; i++) {
+        let cnt = await DB_admin.getComplainCount(sellerList[i].SELLER_ID);
+        let totalProducts = await DB_admin.getTotalProducts(sellerList[i].SELLER_ID);
+        sellerList[i].COMPLAIN_COUNT = cnt[0].COUNT;
+        sellerList[i].totalProducts = totalProducts[0].COUNT;
+        let avg = await DB_admin.getSellerRating(sellerList[i].SELLER_ID)
+        sellerList[i].RATING = avg[0].AVG + 0;
+
+    }
+
+
+
+    res.render('admin_seller_view.ejs', {
+        user: user,
+        sellerList: sellerList
+    });
+
+
+});
 
 
 module.exports = router;
