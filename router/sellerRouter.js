@@ -207,6 +207,80 @@ router.post("/seller_complainlist", async (req, res) => {
 
 });
 
+router.post("/seller_profile_edit", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  console.log("profile editing");
+  console.log(user);
+
+
+
+  let buttonPressed = req.body.butt;
+
+
+  if (buttonPressed == 1) {
+   
+
+
+    res.render("seller_profile_edit.ejs", {
+
+      user: user,
+
+    });
+
+  }
+  
+});
+
+router.post('/seller_profile', async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  let results = await DB_Buyer.getUserDetails(user.person_id);
+
+  
+  res.render('seller_profile.ejs', {
+    user: user,
+    value: results[0],
+  });
+
+});
+router.post("/seller_edited_profile", async (req, res) => {
+
+
+  let user  = JSON.parse(req.body.user_info);
+  // let user = {
+  //   user_id : user_info.person_id,
+  //   name:req.body.name,
+
+  //   email:req.body.email,
+  //   address: req.body.address,
+  //   password: req.body.password
+  // }
+  user.name = req.body.name;
+  user.email= req.body.email;
+  user.address = req.body.address;
+  user.password = req.body.password;
+
+  console.log(user);
+
+  await DB_Buyer.updateProfile(user.person_id,req.body.name,req.body.email,req.body.address, req.body.password);
+
+  let results = await DB_Buyer.getUserDetails(user.person_id);
+
+  
+
+    res.render("seller_profile.ejs", {
+
+    user: user,
+    value: results[0],
+
+
+    });
+
+  });
+
 router.post("/seller_search", async (req, res) => {
   let user = JSON.parse(req.body.user_info);
 

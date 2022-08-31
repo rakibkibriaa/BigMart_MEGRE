@@ -249,6 +249,101 @@ router.post("/seller_category_buyer", async (req, res) => {
   });
 
 });
+router.post("/buyer_profile_edit", async (req, res) => {
+
+  let user = JSON.parse(req.body.user_info);
+
+  console.log("profile editing");
+  console.log(user);
+
+
+
+  let buttonPressed = req.body.butt;
+
+
+  if (buttonPressed == 1) {
+   
+
+
+    res.render("buyer_profile_edit.ejs", {
+
+      user: user,
+
+    });
+
+  }
+  
+});
+
+
+router.post("/buyer_edited_profile", async (req, res) => {
+
+
+  let user  = JSON.parse(req.body.user_info);
+  // let user = {
+  //   user_id : user_info.person_id,
+  //   name:req.body.name,
+
+  //   email:req.body.email,
+  //   address: req.body.address,
+  //   password: req.body.password
+  // }
+  user.name = req.body.name;
+  user.email= req.body.email;
+  user.address = req.body.address;
+  user.password = req.body.password;
+
+  console.log(user);
+
+  await DB_Buyer.updateProfile(user.person_id,req.body.name,req.body.email,req.body.address, req.body.password);
+
+  let results = await DB_Buyer.getUserDetails(user.person_id);
+
+  //let order_brief = await DB_Buyer.getPreviousOrder(user.person_id);
+
+  let result = await DB_Buyer.getCartIdOfOrder(user.person_id);
+
+  let order_brief = []
+
+  for (let i = 0; i < result.length; i++) {
+
+    let products = await DB_Buyer.getProductsByCartId(result[i].CART_ID)
+
+
+    const obj = {
+
+      ORDER_DATE: result[i].ORDER_DATE,
+      CART_ID: result[i].CART_ID,
+      ORDER_STATUS: result[i].ORDER_STATUS,
+      value: products
+
+    }
+
+
+    order_brief.push(obj);
+
+  }
+
+  order_brief.sort((a, b) => (a.ORDER_DATE > b.ORDER_DATE) ? 1 : ((b.ORDER_DATE > a.ORDER_DATE) ? -1 : 0))
+
+
+  console.log(results[0]);
+
+
+   
+
+  console.log("this is buyer edited profile");
+  console.log(results[0]);
+
+    res.render("profile.ejs", {
+
+    user: user,
+    value: results[0],
+    order_brief: order_brief
+
+    });
+
+  });
 router.post("/edit_cart", async (req, res) => {
 
   let result1 = await DB_Buyer.getProductDetails(req.body.product_id);
@@ -594,7 +689,9 @@ router.post('/profile', async (req, res) => {
 
   order_brief.sort((a, b) => (a.ORDER_DATE > b.ORDER_DATE) ? 1 : ((b.ORDER_DATE > a.ORDER_DATE) ? -1 : 0))
 
-  console.log(results[0])
+  
+  console.log("this is profile");
+  console.log(results[0]);
   res.render('profile.ejs', {
     user: user,
     value: results[0],

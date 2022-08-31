@@ -114,67 +114,42 @@
 
 
     
-    <div class="card-deck">
-        <div class="card">
-            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-            <div class="card-body mt-10">
-            <h5 class="card-title">My Profile</h5>
-            <p class="card-text">Name: <%=value.NAME %></p>
-            <p class="card-text">Email: <%=value.EMAIL %></p>
-            <p class="card-text">Address: <%=value.ADDRESS %></p>
-            <form action="/buyer_profile_edit" method="POST">
-            <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-            <button class="btn btn-outline-primary  mt-5" name='butt' value='1' type="submit" >Edit</button>
+        <div class="loginbox">
+            <h1>Edit Profile</h1>
+    
+            <form action="/buyer_edited_profile" method = "post">
+                <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
+               
+
+                <input type="hidden" name="from" value="signup">
+                <p>Name</p>
+                <input type="text" name="name" id="name" placeholder="Enter  name" value = <%= user.NAME %> >
+                <br>
+                <p>Email</p>
+                <input type="email" name="email" id = "email" placeholder="Enter email" value = <%= user.EMAIL %>>
+                <br>
+                <p>Address</p>
+                <input type="text" name="address" id = "address" placeholder="Enter address" value = <%= user.ADDRESS %>>
+                <br>
+                <p>Password</p>
+                <input type="password" name="password" id = "password" placeholder="Enter password" value = <%= user.PASSWORD %>>
+                <br>
+                
+    
+                <!-- <a href="/">Sign In</a> -->
+    
+            
+                
+                
+               
+                <br>
+                <br>
+                <input type="submit" id="submit" value="Edit">
             </form>
-            </div>
-
+    
         </div>
-    </div>
 
-    <div>
-            <div class="mb-5 mt-5">
-                <div class="d-flex justify-content-center">
-                    <h1>My Orders</h1>
-                </div>
-                
-            </div>
-
-            <div class="card-deck">
-                
-                <% for(var i=0; i < order_brief.length;i++) {%>
-                    
-                    <div class=" col-4 mb-5">
-
-                    <button class="btn" type="submit">
-
-                        <form action="/show_order_details" method="POST">
-                            
-                            <button class="btn" type="submit">
-
-                                <div class="card">
-                                    <div class="card-body mt-10">
-
-                                        <input type="hidden" name='user_info' value=<%=JSON.stringify(user) %> />
-                                        <input type="hidden" name="CART_ID" value=<%=order_brief[i].CART_ID %> >
-                                        
-
-                                            <h5 class="card-title">Placed on: <%=order_brief[i].ORDER_DATE %></h5>
-
-                                                <% for(var j=0; j < order_brief[i].value.length;j++) {%>
-
-                                                    <p class="card-text"><%=order_brief[i].value[j].PRODUCT_NAME %> X <%=order_brief[i].value[j].QUANTITY %></p>
-                                                        
-                                                <%} %>
-                                                
-                                            <h6 class="card-title">Order Status: <%=order_brief[i].ORDER_STATUS %></h5>
-                                    </div>
-                                </div>
-                            </button>
-                        </form>
-                    </div>
-                <%} %>
-            </div>
-    </div>
+    
     
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

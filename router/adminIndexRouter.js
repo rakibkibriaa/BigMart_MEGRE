@@ -616,7 +616,7 @@ router.post("/admin_products_buyer", async (req, res) => {
 
 
     let user = JSON.parse(req.body.user_info);
-    let seller = req.body.seller;
+    let seller = req.body.seller_id;
 
     let products = await DB_Seller.getAllProducts(req.body.category, seller);
     console.log(products)

@@ -256,15 +256,11 @@ async function deleteApproval(seller_id){
 async function getLoginInfoByID(id) {
     const sql = `
         SELECT 
-            ID,
-            NAME,
-            PASSWORD,
-            EMAIL,
-            IMAGE
+            *
         FROM
             Person
         WHERE
-            ID = :id
+            PERSON_ID = :id
     `;
     const binds = {
         id: id

@@ -36,6 +36,24 @@ async function getAllProducts(category) {
 
     return (await database.execute(sql, binds, database.options)).rows;
 }
+async function updateProfile(user_id, name, email, address, password) {
+    const sql = `
+        UPDATE PERSON SET NAME = :name,
+        EMAIL = :email,
+        ADDRESS = :address,
+        PASSWORD = :password
+        WHERE PERSON_ID = :user_id
+        `;
+    const binds = {
+        user_id: user_id,
+        name:name,
+        email:email,
+        address:address,
+        password:password
+    }
+
+    return (await database.execute(sql, binds, database.options)).rows;
+}
 async function getRemaining(product_id) {
     const sql = `
         SELECT QUANTITY
@@ -678,5 +696,6 @@ module.exports = {
     updateCart,
     editCart,
     isInWishlist,
-    updateWishlist
+    updateWishlist,
+    updateProfile
 }
